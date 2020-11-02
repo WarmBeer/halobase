@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /invite/
+Disallow: /profile/
+Disallow: /auth
+
+Sitemap: https://halobase.net/sitemap.xml

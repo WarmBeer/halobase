@@ -132,7 +132,13 @@ const dao = {
         },
         servers: [],
         getServers() {
-            fetch(`/testdata/servers.json`)
+            this.servers = [];
+            this.getPlayersOnline();
+            fetch(`${API_URL}/servers`, {
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+            })
                 .then(response => response.json())
                 .then((result) => {
                     this.servers = result;
@@ -161,6 +167,15 @@ const dao = {
             })
                 .then(response => response.json())
                 .then(result => result);
+        },
+        playersOnline: 0,
+        getPlayersOnline() {
+            fetch(`${API_URL}/servers/watching`)
+                .then(response => response.json())
+                .then((result) => {
+                    this.playersOnline = result;
+                }).catch(() => {
+                });
         },
         serverInfo: {},
         gettingInfo: false,

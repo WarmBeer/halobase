@@ -247,6 +247,37 @@
       </v-col>
       <v-spacer></v-spacer>
 
+      <v-col
+          cols="12"
+          sm="auto"
+      >
+        <div
+            class="pa-1 subtitle-1 white--text font-weight-bold"
+        >
+          {{ $dao.servers.playersOnline }} Spartans online
+        </div>
+      </v-col>
+      <v-col
+          cols="12"
+          sm="auto"
+      >
+        <v-btn
+            width="100%"
+            elevation="0"
+            color="white"
+            class="text-caption font-weight-bold rounded-lg"
+            @click="$dao.servers.getServers()"
+            :disabled="!isLoggedIn"
+        >
+          Refresh
+          <v-icon
+              right
+              dark
+          >
+            mdi-refresh
+          </v-icon>
+        </v-btn>
+      </v-col>
       <!-- SERVER HOST DIALOG START HERE-->
       <v-col
           cols="12"
