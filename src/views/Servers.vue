@@ -24,7 +24,7 @@
         text
         type="warning"
     >
-      CHEATERS WILL NOW BE BANNED. Server hosts can report cheaters in our Discord.
+      CHEATERS WILL NOW BE BANNED FROM USING HALOBASE. Server hosts can report cheaters in our Discord.
     </v-alert>
     <v-alert
         text
@@ -397,6 +397,7 @@
                   color="blue darken-1"
                   text
                   :disabled="!valid"
+                  :loading="waitingOnResponse"
                   @click="addServer()"
               >
                 Add Server
@@ -473,7 +474,6 @@
               <v-btn
                   color="blue darken-1"
                   text
-                  :disabled="waitingOnResponse"
                   @click="getServerInfo()"
               >
                 Refresh
@@ -486,7 +486,9 @@
     </v-row>
 
     <!-- SERVER CARDS START HERE-->
-    <v-row>
+    <v-row
+        v-if="servers.length > 0"
+    >
       <v-col
           v-for="(server, i) in servers"
           :key="i"
@@ -679,6 +681,17 @@
         </v-hover>
       </v-col>
     </v-row>
+    <v-row
+        v-else
+        justify="center"
+    >
+      <v-alert
+          text
+          type="error"
+      >
+        No servers found. Why don't you host one? It's easy!
+      </v-alert>
+    </v-row>
   </v-container>
   <v-container v-else>
     <v-alert
@@ -745,9 +758,12 @@ export default {
   methods: {
     getServerInfo() {
       this.$dao.servers.getServerInfo();
-      this.server = JSON.parse(localStorage.getItem('HaloBase_Server'));
+      if (localStorage.getItem('HaloBase_Server') !== null) {
+        this.server = JSON.parse(localStorage.getItem('HaloBase_Server'));
+      }
     },
     addServer() {
+      this.waitingOnResponse = true;
       localStorage.setItem('HaloBase_Server', JSON.stringify(this.server));
       this.$dao.servers.addServer(this.server)
           .then((result) => {
@@ -760,6 +776,9 @@ export default {
               show: true,
               text: result.message
             };
+            this.waitingOnResponse = false;
+          })
+          .catch(() => {
             this.waitingOnResponse = false;
           });
     },

@@ -11,7 +11,7 @@
         tile
     >
 
-      <v-row class="mx-4 py-8">
+      <v-row class="mx-2 py-8">
         <v-col
             cols="12"
             :md="12/(sections.length+2)"
@@ -33,7 +33,7 @@
             class="px-2 text-left"
         >
           <div
-              class="mb-4 subtitle-2 font-weight-bold orange--text"
+              class="mb-4 subtitle-2 font-weight-bold orangekeg--text"
           >
             {{ section.title }}
           </div>
@@ -53,7 +53,7 @@
             class="px-2 text-left"
         >
           <div
-              class="mb-4 subtitle-2 font-weight-bold orange--text"
+              class="mb-4 subtitle-2 font-weight-bold orangekeg--text"
           >
             SUPPORT HALOBASE
           </div>
@@ -74,14 +74,14 @@
 
       <v-divider class="mx-6"/>
 
-      <v-row class="mx-4">
+      <v-row class="mx-2">
         <v-col
           cols="auto"
         >
           <div
               class="caption white--text"
           >
-            Copyright © {{ new Date().getFullYear() }} Halobase & The Beer Keg. Halo © Microsoft Corporation. Halobase is not endorsed by or affiliated with Microsoft.
+            Copyright © {{ new Date().getFullYear() }} HaloBase & The Beer Keg. Halo © Microsoft Corporation. Halobase is not endorsed by or affiliated with Microsoft.
           </div>
         </v-col>
         <v-spacer/>
@@ -90,7 +90,7 @@
         >
           <a
               href=""
-              class="caption d-block orangekeg--text font-weight-regular text-decoration-none"
+              class="caption d-block blue--text font-weight-regular text-decoration-none"
               style="width: 100%"
           >
             Terms of Service
@@ -135,7 +135,7 @@ export default {
         ]
       },
       {
-        title: 'SUPPORT',
+        title: 'HELP & CONTACT',
         links: [
           { title: 'Help', url: '' },
           { title: 'Contact us', url: '' },

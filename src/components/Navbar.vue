@@ -114,12 +114,7 @@
             -webkit-text-stroke: 1px transparent;
             letter-spacing: 1.6px"
       >
-          <span style="
-          background: -webkit-linear-gradient(#fff,#eee);
-          -webkit-background-clip: text;">HALO</span>
-        <span style="
-          background: -webkit-linear-gradient(#f99f1c,#ee4922);
-          -webkit-background-clip: text;">BASE</span>
+          <logo/>
       </v-toolbar-title>
       <v-spacer></v-spacer>
 
