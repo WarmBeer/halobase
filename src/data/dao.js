@@ -221,6 +221,19 @@ const dao = {
                     console.error(err);
                 });
         }
+    },
+    file: {
+        file: {},
+        getFile(identifier) {
+            return fetch(`${API_URL}/files/${identifier}`)
+                .then(response => response.json())
+                .then(result => result);
+        },
+        getDownload(identifier) {
+            return fetch(`${API_URL}/download/${identifier}`)
+                .then(response => response.json())
+                .then(result => result);
+        },
     }
 }
 

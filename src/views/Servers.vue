@@ -20,6 +20,26 @@
       </template>
     </v-snackbar>
 
+    <v-alert
+        text
+        type="warning"
+    >
+      CHEATERS WILL NOW BE BANNED. Server hosts can report cheaters in our Discord.
+    </v-alert>
+    <v-alert
+        text
+        type="info"
+    >
+      Windows Store and XBOX players can join servers by using the Find Player option in the game, just search for the gamertag next to the
+      <v-icon
+          small
+          color="blue"
+      >
+        mdi-microsoft-xbox
+      </v-icon>
+      icon and click 'join session'.
+    </v-alert>
+
     <!-- MESSAGE TOOLBAR START HERE--
     <v-row>
       <v-col
@@ -220,9 +240,9 @@
           sm="auto"
       >
         <v-toolbar-title
-            class="text-h6 white--text font-weight-bold"
+            class="text-h4 white--text font-weight-bold"
         >
-          SERVER BROWSER
+          Server Browser
         </v-toolbar-title>
       </v-col>
       <v-spacer></v-spacer>
@@ -238,9 +258,10 @@
         >
           <template v-slot:activator="{ on }">
             <v-btn
+                width="100%"
                 elevation="0"
                 color="accent"
-                class="text-caption font-weight-bold"
+                class="text-caption font-weight-bold rounded-lg"
                 v-on="on"
                 @click="getServerInfo()"
                 :disabled="!isLoggedIn"
@@ -250,7 +271,7 @@
                   right
                   dark
               >
-                mdi-plus
+                mdi-steam
               </v-icon>
             </v-btn>
           </template>
@@ -447,68 +468,89 @@
       >
         <v-hover v-slot:default="{ hover }">
           <v-card
-              color="transparent"
+              color="primary"
               flat
               dark
-              :class="hover ? '' : ''"
+              class="rounded-lg"
+              elevation="0"
           >
-            <v-img
-                :aspect-ratio="16/10"
-                :src="server.imageURL"
-                class="black rounded-lg"
+            <v-card-actions
+                class="pa-0"
             >
-              <v-row
-                  v-if="!hover"
-                  class="mx-2 py-1"
+              <v-list-item
+                  class="px-4"
               >
-                <v-chip
-                    label
-                    dark
-                    small
-                    class="subtitle-2"
-                    style="background-color: rgba(0, 0, 0, 0.6);border-color: rgba(255, 255, 255, 0.1);"
+                <v-list-item-avatar
+                    color="white"
+                    size="28"
+                    class="mr-2"
                 >
-                  {{ server.name }}
-                </v-chip>
-              </v-row>
-              <v-row
-                  v-if="!hover"
-                  class="mx-2 py-1"
-              >
-                <v-chip
-                    label
-                    dark
-                    small
-                    class="subtitle-2 blue--text"
-                    style="background-color: rgba(0, 0, 0, 0.6);border-color: rgba(255, 255, 255, 0.1);"
+                  <v-img
+                      v-if="server.imageURL"
+                      class="elevation-6"
+                      alt=""
+                      :src="server.imageURL"
+                  ></v-img>
+                  <v-icon
+                      v-else
+                  >
+                    mdi-account
+                  </v-icon>
+                </v-list-item-avatar>
+
+                <v-list-item-content>
+                  <v-list-item-title class="caption orangekeg--text text-left">{{ server.host }}</v-list-item-title>
+                </v-list-item-content>
+
+                <v-row
+                    align="center"
+                    justify="end"
+                    class="mx-0"
                 >
-                  Started: {{ timeSince(server.created) }} ago
-                </v-chip>
-              </v-row>
-              <v-row
-                  v-if="!hover"
-                  class="mx-2 py-1"
-              >
-                <v-chip
-                    label
-                    dark
-                    small
-                    class="subtitle-2 orange--text"
-                    style="background-color: rgba(0, 0, 0, 0.6);border-color: rgba(255, 255, 255, 0.1);"
-                >
-                  {{ server.game }}
-                </v-chip>
-              </v-row>
-              <v-fade-transition>
-                <div
-                    v-if="hover"
-                    class="pa-4 d-flex v-card--reveal subtitle-2 white--text">
-                  {{ server.message }}
-                </div>
-              </v-fade-transition>
-            </v-img>
+                  <v-hover v-slot:default="{ hover }">
+                    <v-icon
+                        class="mr-1"
+                        :color="hover ? 'red' : 'rgba(255, 255, 255, .1)'"
+                    >
+                      mdi-heart
+                    </v-icon>
+                  </v-hover>
+                  <span class="subheading white--text">{{ server.likes || 0 }}</span>
+                </v-row>
+              </v-list-item>
+            </v-card-actions>
             <v-row
-                class="mx-0"
+                class="mx-4 py-2 subtitle-2"
+            >
+              {{ server.name }}
+            </v-row>
+            <v-row
+                class="mx-4 py-1"
+            >
+              <v-chip
+                  label
+                  dark
+                  small
+                  class="white--text"
+                  color="accent"
+              >
+                {{ server.game }}
+              </v-chip>
+            </v-row>
+            <div
+                v-if="hover"
+                class="pa-4 subtitle-2 text-left">
+              <v-row class="mx-0 mb-1 grey--text">Started {{ timeSince(server.created) }} ago</v-row>
+              <v-row class="mx-0 white--text">{{ server.message }}</v-row>
+            </div>
+            <div
+                v-else
+                class="pa-4 caption grey--text text-center">
+              HOVER FOR DETAILS
+            </div>
+            <v-row
+                v-if="hover"
+                class="mx-0 mb-4"
             >
               <v-col
                   cols="12"
@@ -517,7 +559,7 @@
                   class="pa-0"
               >
                 <v-btn
-                    width="100%"
+                    small
                     elevation="0"
                     color="indigo lighten-1"
                     :disabled="!server.discord"
@@ -540,9 +582,11 @@
                   class="pa-0"
               >
                 <v-btn
-                    width="100%"
+                    small
                     elevation="0"
                     color="grey"
+                    v-clipboard:copy="formatInvite(server.invite)"
+                    v-clipboard:success="onCopy"
                 >
                   Share
                   <v-icon
@@ -555,9 +599,12 @@
               </v-col>
             </v-row>
             <v-btn
+                text
                 width="100%"
                 elevation="0"
                 color="blue"
+                v-clipboard:copy="server.host"
+                v-clipboard:success="onCopy"
             >
               {{ server.host }}
               <v-icon
@@ -603,9 +650,12 @@
     </v-row>
   </v-container>
   <v-container v-else>
-    <div
-        class="py-12 text-subtitle-1 white--text darken-1"
-    >Please sign in to view servers.</div>
+    <v-alert
+        text
+        type="error"
+    >
+      Please sign in to view this page.
+    </v-alert>
   </v-container>
 </template>
 
@@ -732,6 +782,16 @@ export default {
     getInviteLink(invite) {
       return this.$dao.servers.getInviteLink(invite);
     },
+    formatInvite(invite) {
+      const APP_URL = process.env.VUE_APP_APP_URL || 'http://localhost:8080';
+      return `${APP_URL}/invite/${invite}`;
+    },
+    onCopy() {
+      this.snackbar = {
+        show: true,
+        text: 'Copied.'
+      };
+    },
   },
   computed: {
     user() {
@@ -760,13 +820,11 @@ export default {
     }
   },
   mounted() {
-    if (this.isLoggedIn) {
-      /* unfinished work (only likes need fixing)
-      this.$dao.servers.getMessages();
-      this.$dao.servers.getLikedMessages();
-      */
-      this.$dao.servers.getServers();
-    }
+    /* unfinished work (only likes need fixing)
+    this.$dao.servers.getMessages();
+    this.$dao.servers.getLikedMessages();
+    */
+    this.$dao.servers.getServers();
   }
 }
 </script>

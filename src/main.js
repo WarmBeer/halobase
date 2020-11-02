@@ -3,6 +3,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
 import dao from './data/dao'
+import VueClipboard from 'vue-clipboard2'
 
 Vue.config.productionTip = false
 
@@ -17,6 +18,7 @@ shared.install = function () {
 };
 
 Vue.use(shared);
+Vue.use(VueClipboard);
 
 Vue.mixin({
   methods: {
@@ -43,6 +45,11 @@ Vue.mixin({
         return `${interval} minute${(interval > 1 ? 's' : '')}`;
       }
       return `${Math.floor(seconds)} seconds`;
+    },
+    fileSize(size) {
+      return (size / 1000 < 1000)
+          ? `${(size / 1000).toFixed(2)} KB`
+          : `${(size / 1000000).toFixed(2)} MB`;
     },
   },
 })

@@ -1,20 +1,22 @@
 <template>
   <v-app class="no-bg">
     <navbar/>
-    <v-main>
+    <v-main class="mb-0">
       <v-sheet
           id="bg"
           color="secondary"
       ></v-sheet>
       <router-view/>
     </v-main>
+    <Footer/>
   </v-app>
 </template>
 
 <script>
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 export default {
-  components: {Navbar},
+  components: {Footer, Navbar},
   data: () => ({
   }),
   mounted() {
@@ -56,11 +58,24 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  /*
-  background: linear-gradient(140deg,rgba(9,48,125,.95),rgba(8,40,102,.95) 4%,rgba(4,20,44,.95)),url(https://halobase.net/assets/ringworld.jpg) no-repeat 50% fixed;
-  background-size: 110%;
-  filter: saturate(2);
-  */
+  overflow: hidden; // added for pseudo-element
+
+  // Fixed-position background image
+  &::before {
+    content: ' ';
+    position: fixed; // instead of background-attachment
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /*
+    background: linear-gradient(140deg,rgba(9,48,125,.995),rgba(8,40,102,.995) 4%,rgba(4,20,44,.995)),url(https://halobase.net/assets/ringworld.jpg) no-repeat center center;
+    background-size: 120%;
+    filter: saturate(1);
+    */
+    will-change: transform; // creates a new paint layer
+    z-index: -1;
+  }
 }
 
 .bg-black-4 {
@@ -82,21 +97,26 @@ body {
   font-weight: 500;
   color: white;
   line-height: 1.3;
-  padding: .5em 1.4em .5em .8em;
+  padding: .5em 2em .5em 1em;
   box-sizing: border-box;
+  height: 36px;
   margin: 0 auto;
-  border-radius: .5em;
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
-  background-color: transparent;
+  background-color: rgba(255, 255, 255, .1);
   background-image: url("~@/assets/arrow-down.svg");
   background-repeat: no-repeat, repeat;
   /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
-  background-position: right 0em top 50%, 0 0;
+  background-position: right .6em top 50%, 0 0;
   /* icon size, then gradient */
   background-size: 1.1em auto, 100%;
   outline: none;
+  border-radius: 28px;
+}
+
+.select-css:hover {
+  background-color: rgba(255, 255, 255, .15);
 }
 
 .v-card--reveal {
@@ -105,7 +125,7 @@ body {
   bottom: 0;
   height: 100%;
   width: 100%;
-  background: linear-gradient(to top, rgba(0, 0, 0, .95), rgba(0, 0, 0, .95));
+  background: linear-gradient(to top, rgba(0, 0, 0, .25), rgba(0, 0, 0, .25));
   overflow-y: auto;
 }
 
@@ -114,5 +134,13 @@ body {
   bottom: 0;
   right: 0;
   left: 0;
+}
+
+.orangekeg--text {
+  color: #f66003!important;
+}
+
+.orangekeg {
+  background-color: #f66003!important;
 }
 </style>

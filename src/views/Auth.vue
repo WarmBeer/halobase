@@ -15,7 +15,7 @@ export default {
     const token = this.$route.query.token;
     if (token) {
       this.$dao.user.setToken(token);
-      this.$router.push({ path: '/' });
+      this.$router.push({ path: '/servers' });
     }
   },
 };

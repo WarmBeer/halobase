@@ -7,8 +7,7 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
-    alias: '/Dashboard',
+    path: '/dashboard',
     name: 'Dashboard',
     component: Dashboard
   },
@@ -18,7 +17,8 @@ const routes = [
     component: Auth,
   },
   {
-    path: '/Servers',
+    path: '/servers',
+    alias: '/',
     name: 'Servers',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
@@ -26,12 +26,20 @@ const routes = [
     component: () => import('../views/Servers.vue')
   },
   {
-    path: '/Fileshare',
+    path: '/fileshare',
     name: 'Fileshare',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import('../views/Fileshare.vue')
+  },
+  {
+    path: '/file/:identifier',
+    name: 'File',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/File.vue')
   }
 ]
 

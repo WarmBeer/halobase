@@ -6,9 +6,9 @@
           sm="auto"
       >
         <v-toolbar-title
-            class="text-h6 white--text font-weight-bold"
+            class="text-h4 white--text font-weight-bold"
         >
-          ALL FILES
+          All Files
         </v-toolbar-title>
       </v-col>
       <v-col
@@ -45,6 +45,7 @@
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                   rounded
+                  width="100%"
                   :color="filters.type || filters.game || filters.search ? 'blue' : 'white'"
                   :class="filters.type || filters.game || filters.search ? 'white--text' : 'black--text'"
                   v-bind="attrs"
@@ -60,8 +61,14 @@
               </v-btn>
             </template>
 
-            <v-card>
-              <v-list>
+            <v-card
+                color="primary"
+                dark
+            >
+              <v-list
+                  color="primary"
+                  dark
+              >
                 <v-list-item>
                   <v-row>
                     <v-col
@@ -78,7 +85,7 @@
                     >
                       <select
                           v-model="filters.type"
-                          class="select-filter"
+                          class="select-filter white--text"
                           @change="updateFilters()"
                       >
                         <option value="">Any</option>
@@ -104,7 +111,7 @@
                     >
                       <select
                           v-model="filters.game"
-                          class="select-filter"
+                          class="select-filter white--text"
                           @change="updateFilters()"
                       >
                         <option value="">Any</option>
@@ -135,7 +142,6 @@
       </v-col>
       <!-- END FILTER MENU -->
 
-      <v-spacer></v-spacer>
       <v-col
           cols="12"
           sm="auto"
@@ -143,6 +149,7 @@
         <select
             v-model="sorting"
             class="select-css"
+            style="width: 100%;"
             @change="updateSorting()"
         >
           <option value="downloads">Most Downloaded</option>
@@ -151,14 +158,18 @@
           <option value="views">Most Viewed</option>
         </select>
       </v-col>
+
+      <v-spacer></v-spacer>
       <v-col
           cols="12"
           sm="auto"
       >
         <v-btn
-            elevation="2"
+            width="100%"
+            disabled
+            elevation="0"
             color="accent"
-            class="text-caption font-weight-bold"
+            class="text-caption font-weight-bold rounded-lg"
         >
           Upload File
           <v-icon
@@ -183,67 +194,26 @@
           xl="2"
       >
           <v-card
-              color="primary"
               flat
-              style="cursor: pointer"
+              dark
+              color="primary"
               class="rounded-lg"
+              elevation="0"
           >
-            <v-hover v-slot:default="{ hover }">
-              <v-img
-                  :aspect-ratio="16/10"
-                  :src="file.images.thumb"
-                  class="black rounded-lg"
-              >
-                <v-fade-transition>
-                  <div
-                      v-if="hover"
-                      class="pa-4 d-flex v-card--reveal subtitle-2 white--text">
-                    {{ file.description.short }}
-                  </div>
-                </v-fade-transition>
-                <v-row
-                    v-if="!hover"
-                    class="mx-1 py-1"
-                >
-                  <v-spacer></v-spacer>
-                  <v-chip
-                      small
-                      dark
-                      label
-                      class="mr-1 white--text"
-                      color="secondary"
-                  >
-                    {{ file.views }}
-                    <v-icon
-                        small
-                        class="mx-1"
-                    >
-                      mdi-eye
-                    </v-icon>
-                  </v-chip>
-                  <v-chip
-                      small
-                      dark
-                      label
-                      class="white--text float-left"
-                      color="secondary"
-                  >
-                    {{ file.downloads }}
-                    <v-icon
-                        small
-                    >
-                      mdi-download
-                    </v-icon>
-                  </v-chip>
-                </v-row>
-              </v-img>
-            </v-hover>
-            <!-- CARD TAGS
+            <v-card-title
+                class="subtitle-2 py-2 white--text"
+                @click="openFile(file.identifier)"
+            >
+              <div style="word-break: normal">
+                {{ file.name }}
+              </div>
+            </v-card-title>
+            <!-- TAG FILTERS
             <v-row
-                class="mx-0 py-2"
+                class="mx-0 pa-2 pt-0"
             >
               <v-chip
-                  color="rgba(255, 255, 255, .1)"
+                  color="accent"
                   class="white--text"
                   label
                   small
@@ -252,7 +222,7 @@
                 {{ file.type }}
               </v-chip>
               <v-chip
-                  color="rgba(255, 255, 255, .1)"
+                  color="accent"
                   class="ml-2 white--text"
                   label
                   small
@@ -262,16 +232,26 @@
               </v-chip>
             </v-row>
             -->
-            <v-card-title
-                class="subtitle-2 px-2 pb-0 pt-1 white--text text-truncate"
-            >
-              {{ file.name }}
-            </v-card-title>
+            <v-hover v-slot:default="{ hover }">
+              <v-img
+                  :aspect-ratio="16/10"
+                  :src="file.images.thumb"
+                  class="black mx-0"
+                  @click="openFile(file.identifier)"
+              >
+                <v-fade-transition>
+                  <div
+                      v-if="hover"
+                      class="pa-4 d-flex v-card--reveal subtitle-2 white--text">
+                  </div>
+                </v-fade-transition>
+              </v-img>
+            </v-hover>
             <v-card-actions
                 class="pa-0"
             >
               <v-list-item
-                  class="px-2"
+                  class="px-4"
               >
                 <v-list-item-avatar
                     color="white"
@@ -279,37 +259,46 @@
                     class="mr-2"
                 >
                   <v-img
-                      v-if="file.author.avatar"
                       class="elevation-6"
                       alt=""
-                      :src="file.author.avatar"
+                      :src="file.author.avatar || 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/15/151e1a4b597fec44f6bf3c9d0b116ca1c9f76867_medium.jpg'"
                   ></v-img>
-                  <v-icon
-                      v-else
-                  >
-                    mdi-account
-                  </v-icon>
                 </v-list-item-avatar>
 
                 <v-list-item-content>
-                  <v-list-item-title class="caption grey--text text-left">{{ file.author.name }}</v-list-item-title>
+                  <v-list-item-title class="caption text-left orangekeg--text">{{ file.author.name }}</v-list-item-title>
                 </v-list-item-content>
 
-                <v-row
-                    align="center"
-                    justify="end"
-                    class="mx-0"
+                <v-chip
+                    small
+                    dark
+                    label
+                    color="transparent"
+                    class="no-hover pa-0"
+                    @click="openFile(file.identifier)"
                 >
-                  <v-hover v-slot:default="{ hover }">
-                    <v-icon
-                        class="mr-1"
-                        :color="hover ? 'red' : 'rgba(255, 255, 255, .1)'"
-                    >
-                      mdi-heart
-                    </v-icon>
-                  </v-hover>
-                  <span class="subheading white--text">{{ file.likes || 0 }}</span>
-                </v-row>
+                  {{ file.views }}
+                  <v-icon
+                      small
+                      class="mx-1"
+                  >
+                    mdi-eye
+                  </v-icon>
+                </v-chip>
+                <v-chip
+                    small
+                    dark
+                    label
+                    color="transparent"
+                    class="no-hover pa-0 ml-2"
+                >
+                  {{ file.downloads }}
+                  <v-icon
+                      small
+                  >
+                    mdi-download
+                  </v-icon>
+                </v-chip>
               </v-list-item>
             </v-card-actions>
           </v-card>
@@ -317,13 +306,14 @@
     </v-row>
     <v-row
         v-if="$dao.fileshare.totalFiles > $dao.fileshare.files.length"
-        class="py-12"
+        class="py-6"
         justify="center"
     >
       <v-btn
           light
           color="white"
-          elevation="2"
+          elevation="0"
+          class="text-caption font-weight-bold rounded-lg"
           @click="getMoreFiles()"
       >
         Show More Files
@@ -345,6 +335,9 @@ export default {
     },
   }),
   methods: {
+    openFile(identifier) {
+      this.$router.push(`/file/${identifier}`);
+    },
     getFiles() {
       this.$dao.fileshare.getFiles();
     },
@@ -391,5 +384,16 @@ export default {
     padding: .3em 1em;
     border-radius: 4px;
     background-color: rgba(0, 0, 0, .1);
+  }
+
+  .fileName {
+    white-space: nowrap ;
+    word-break: normal;
+    overflow: hidden ;
+    text-overflow: ellipsis;
+  }
+
+  .no-hover::before {
+    opacity: 0!important;
   }
 </style>
