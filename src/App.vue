@@ -143,4 +143,11 @@ body {
 .orangekeg {
   background-color: #f66003!important;
 }
+
+.markdown {
+  a {
+    color: #f66003!important;
+    text-decoration: none;
+  }
+}
 </style>

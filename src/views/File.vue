@@ -153,7 +153,7 @@
           <div
               class="mx-8 subtitle-1 white--text text-left"
           >
-            {{ file.description.long }}
+            <div class="markdown" v-html="marked(newDescription)"></div>
           </div>
         </v-sheet>
       </v-col>
@@ -162,6 +162,9 @@
 </template>
 
 <script>
+import marked from 'marked';
+import DOMPurify from 'dompurify';
+
 export default {
   name: "File",
   data: () => ({
@@ -198,6 +201,9 @@ export default {
     downloadLink: ''
   }),
   methods: {
+    marked(input) {
+      return marked(DOMPurify.sanitize(input));
+    },
     getFile() {
       this.$dao.file.getFile(this.identifier)
           .then((file) => {
@@ -272,9 +278,6 @@ export default {
       }
       return imageUrls;
     },
-    downloadURL() {
-      return `https://cdn.halobase.net/file/halokeg-private/${this.downloadLink}?Authorization=${this.downloadToken}`
-    }
   },
   beforeMount() {
     if (this.$route.params) {
