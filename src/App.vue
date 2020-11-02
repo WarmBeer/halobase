@@ -19,6 +19,8 @@ export default {
   components: {Footer, Navbar},
   data: () => ({
   }),
+  methods: {
+  },
   mounted() {
     this.$dao.user.getToken();
   }
@@ -26,6 +28,33 @@ export default {
 </script>
 
 <style lang="scss">
+
+div::-webkit-scrollbar {
+  background-color:transparent;
+  height:8px;
+  width:8px
+}
+
+/* background of the scrollbar except button or resizer */
+div::-webkit-scrollbar-track {
+  background-color:transparent;
+}
+
+/* scrollbar itself */
+div::-webkit-scrollbar-thumb {
+  background-color:rgba(0, 0, 0, 0.4);
+  border-radius:16px;
+}
+
+/* set button(top and bottom of the scrollbar) */
+div::-webkit-scrollbar-button {display:none}
+
+.view {
+  padding-top: 56px;
+  padding-bottom: 0px;
+  margin: 0 5em;
+}
+
 #app {
   font-family: Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

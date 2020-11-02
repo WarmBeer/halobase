@@ -54,6 +54,7 @@
                 <v-icon
                     right
                     dark
+                    size="18px"
                     class="mx-0"
                 >
                   mdi-tune

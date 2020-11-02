@@ -273,6 +273,7 @@
           <v-icon
               right
               dark
+              size="18px"
           >
             mdi-refresh
           </v-icon>
@@ -301,6 +302,7 @@
               <v-icon
                   right
                   dark
+                  size="18px"
               >
                 mdi-steam
               </v-icon>
@@ -526,6 +528,7 @@
                   ></v-img>
                   <v-icon
                       v-else
+                      size="18px"
                   >
                     mdi-account
                   </v-icon>
@@ -603,6 +606,7 @@
                   <v-icon
                       right
                       dark
+                      size="18px"
                   >
                     mdi-discord
                   </v-icon>
@@ -625,6 +629,7 @@
                   <v-icon
                       right
                       dark
+                      size="18px"
                   >
                     mdi-share
                   </v-icon>
@@ -643,6 +648,7 @@
               <v-icon
                   right
                   dark
+                  size="18px"
               >
                 mdi-microsoft-xbox
               </v-icon>
@@ -658,6 +664,7 @@
               <v-icon
                   right
                   dark
+                  size="18px"
               >
                 mdi-trash-can-outline
               </v-icon>
@@ -673,6 +680,7 @@
               <v-icon
                   right
                   dark
+                  size="18px"
               >
                 mdi-steam
               </v-icon>
@@ -684,6 +692,7 @@
     <v-row
         v-else
         justify="center"
+        class="mx-0 mt-2"
     >
       <v-alert
           text
@@ -842,6 +851,13 @@ export default {
         text: 'Copied.'
       };
     },
+    refreshInviteList() {
+      this.$dao.servers.getServers();
+      // Set Another timer
+      setTimeout(() => {
+        this.refreshInviteList();
+      }, 30000); // 30 seconds
+    },
   },
   computed: {
     user() {
@@ -867,14 +883,14 @@ export default {
     },
     isGettingServerInfo() {
       return this.$dao.servers.gettingInfo;
-    }
+    },
   },
   mounted() {
     /* unfinished work (only likes need fixing)
     this.$dao.servers.getMessages();
     this.$dao.servers.getLikedMessages();
     */
-    this.$dao.servers.getServers();
+    this.refreshInviteList();
   }
 }
 </script>
