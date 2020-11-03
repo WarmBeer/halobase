@@ -267,7 +267,7 @@
             color="white"
             class="text-caption font-weight-bold rounded-lg"
             @click="$dao.servers.getServers()"
-            :disabled="!isLoggedIn"
+            :loading="$dao.servers.gettingServers"
         >
           Refresh
           <v-icon
@@ -690,6 +690,18 @@
       </v-col>
     </v-row>
     <v-row
+        v-else-if="this.$dao.servers.gettingServers"
+        justify="center"
+        class="mx-0 mt-2"
+    >
+      <v-progress-circular
+          :size="70"
+          :width="7"
+          color="accent"
+          indeterminate
+      ></v-progress-circular>
+    </v-row>
+    <v-row
         v-else
         justify="center"
         class="mx-0 mt-2"
@@ -853,13 +865,6 @@ export default {
         text: 'Copied.'
       };
     },
-    refreshInviteList() {
-      this.$dao.servers.getServers();
-      // Set Another timer
-      setTimeout(() => {
-        this.refreshInviteList();
-      }, 30000); // 30 seconds
-    },
   },
   computed: {
     user() {
@@ -892,7 +897,10 @@ export default {
     this.$dao.servers.getMessages();
     this.$dao.servers.getLikedMessages();
     */
-    this.refreshInviteList();
+    this.$dao.servers.getServers();
+    window.setInterval(() => {
+      this.$dao.servers.getServers();
+    }, 30000) // every 30 seconds refresh servers
   }
 }
 </script>

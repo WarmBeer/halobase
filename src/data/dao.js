@@ -131,21 +131,27 @@ const dao = {
                 });
         },
         servers: [],
+        gettingServers: false,
         getServers() {
-            this.servers = [];
-            this.getPlayersOnline();
-            fetch(`${API_URL}/servers`, {
-                headers: {
-                    Authorization: `Bearer ${TOKEN}`,
-                },
-            })
-                .then(response => response.json())
-                .then((result) => {
-                    this.servers = result;
+            if (!this.gettingServers) {
+                this.servers = [];
+                this.gettingServers = true;
+                this.getPlayersOnline();
+                fetch(`${API_URL}/servers`, {
+                    headers: {
+                        Authorization: `Bearer ${TOKEN}`,
+                    },
                 })
-                .catch((err) => {
-                    console.error(err);
-                });
+                    .then(response => response.json())
+                    .then((result) => {
+                        this.servers = result;
+                        this.gettingServers = false;
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        this.gettingServers = false;
+                    });
+            }
         },
         addServer(server) {
             return fetch(`${API_URL}/servers/add`, {
@@ -181,6 +187,7 @@ const dao = {
         gettingInfo: false,
         getServerInfo() {
             if (!this.gettingInfo) {
+                this.serverInfo = {};
                 this.gettingInfo = true;
                 fetch(`${API_URL}/servers/session`, {
                     headers: {
@@ -191,9 +198,11 @@ const dao = {
                     .then((result) => {
                         if (result.ok) {
                             this.serverInfo = result.data;
-                        } else {
-                            this.serverInfo = {};
                         }
+                        this.gettingInfo = false;
+                    })
+                    .catch((err) => {
+                        console.error(err);
                         this.gettingInfo = false;
                     });
             }
