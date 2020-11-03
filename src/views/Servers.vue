@@ -897,6 +897,8 @@ export default {
     this.$dao.servers.getMessages();
     this.$dao.servers.getLikedMessages();
     */
+  },
+  created() {
     this.$dao.servers.getServers();
     window.setInterval(() => {
       this.$dao.servers.getServers();
