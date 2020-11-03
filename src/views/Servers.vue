@@ -1,5 +1,5 @@
 <template>
-  <v-container v-if="isLoggedIn">
+  <v-container>
 
     <!-- SNACKBAR STARTS HERE -->
     <v-snackbar
@@ -702,6 +702,7 @@
       </v-alert>
     </v-row>
   </v-container>
+  <!--
   <v-container v-else>
     <v-alert
         text
@@ -710,6 +711,7 @@
       Please sign in to view this page.
     </v-alert>
   </v-container>
+  -->
 </template>
 
 <script>
