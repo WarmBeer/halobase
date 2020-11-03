@@ -200,15 +200,8 @@
               color="primary"
               class="rounded-lg"
               elevation="0"
+              height="440px"
           >
-            <v-card-title
-                class="subtitle-2 py-2 white--text"
-                @click="openFile(file.identifier)"
-            >
-              <div style="word-break: normal">
-                {{ file.name }}
-              </div>
-            </v-card-title>
             <!-- TAG FILTERS
             <v-row
                 class="mx-0 pa-2 pt-0"
@@ -238,6 +231,7 @@
                   :aspect-ratio="16/10"
                   :src="file.images.thumb"
                   class="black mx-0"
+                  max-width="100%"
                   @click="openFile(file.identifier)"
               >
                 <v-fade-transition>
@@ -248,60 +242,77 @@
                 </v-fade-transition>
               </v-img>
             </v-hover>
-            <v-card-actions
-                class="pa-0"
+            <v-card-title
+                class="subtitle-2 px-4 pb-0 pt-2 white--text text-left text-break"
+                style="cursor: pointer"
+                @click="openFile(file.identifier)"
             >
-              <v-list-item
-                  class="px-4"
+              <div>
+                {{ file.name }}
+              </div>
+            </v-card-title>
+            <p
+                class="caption ma-0 px-4 py-2 white--text text-left text-break"
+            >
+              {{ file.description.short }}
+            </p>
+            <div style="position: absolute;bottom: 0;width: 100%">
+              <v-divider class="mx-4"/>
+              <v-card-actions
+                  class="pa-0"
               >
-                <v-list-item-avatar
-                    color="white"
-                    size="28"
-                    class="mr-2"
+                <v-list-item
+                    class="px-4 grow"
                 >
-                  <v-img
-                      class="elevation-6"
-                      alt=""
-                      :src="file.author.avatar || 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/15/151e1a4b597fec44f6bf3c9d0b116ca1c9f76867_medium.jpg'"
-                  ></v-img>
-                </v-list-item-avatar>
-
-                <v-list-item-content>
-                  <v-list-item-title class="caption text-left orangekeg--text">{{ file.author.name }}</v-list-item-title>
-                </v-list-item-content>
-
-                <v-chip
-                    small
-                    dark
-                    label
-                    color="transparent"
-                    class="no-hover pa-0"
-                    @click="openFile(file.identifier)"
-                >
-                  {{ file.views }}
-                  <v-icon
-                      small
-                      class="mx-1"
+                  <v-list-item-avatar
+                      color="white"
+                      size="28"
+                      class="mr-2"
                   >
-                    mdi-eye
-                  </v-icon>
-                </v-chip>
-                <v-chip
-                    small
-                    dark
-                    label
-                    color="transparent"
-                    class="no-hover pa-0 ml-2"
-                >
-                  {{ file.downloads }}
-                  <v-icon
+                    <v-img
+                        class="elevation-6"
+                        alt=""
+                        :src="file.author.avatar || 'https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/15/151e1a4b597fec44f6bf3c9d0b116ca1c9f76867_medium.jpg'"
+                    ></v-img>
+                  </v-list-item-avatar>
+
+                  <v-list-item-content>
+                    <v-list-item-title class="caption text-left orangekeg--text">{{ file.author.name }}</v-list-item-title>
+                  </v-list-item-content>
+
+                  <v-chip
                       small
+                      dark
+                      label
+                      color="transparent"
+                      class="no-hover pa-0"
+                      @click="openFile(file.identifier)"
                   >
-                    mdi-download
-                  </v-icon>
-                </v-chip>
-              </v-list-item>
-            </v-card-actions>
+                    {{ file.views }}
+                    <v-icon
+                        small
+                        class="mx-1"
+                    >
+                      mdi-eye
+                    </v-icon>
+                  </v-chip>
+                  <v-chip
+                      small
+                      dark
+                      label
+                      color="transparent"
+                      class="no-hover pa-0 ml-2"
+                  >
+                    {{ file.downloads }}
+                    <v-icon
+                        small
+                    >
+                      mdi-download
+                    </v-icon>
+                  </v-chip>
+                </v-list-item>
+              </v-card-actions>
+            </div>
           </v-card>
       </v-col>
     </v-row>

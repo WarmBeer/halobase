@@ -538,40 +538,22 @@
                   <v-list-item-title class="caption orangekeg--text text-left">{{ server.host }}</v-list-item-title>
                 </v-list-item-content>
 
-                <v-row
-                    align="center"
-                    justify="end"
-                    class="mx-0"
+                <v-chip
+                    label
+                    dark
+                    small
+                    class="white--text float-right"
+                    color="accent"
                 >
-                  <v-hover v-slot:default="{ hover }">
-                    <v-icon
-                        class="mr-1"
-                        :color="hover ? 'red' : 'rgba(255, 255, 255, .1)'"
-                    >
-                      mdi-heart
-                    </v-icon>
-                  </v-hover>
-                  <span class="subheading white--text">{{ server.likes || 0 }}</span>
-                </v-row>
+                  {{ server.game }}
+                </v-chip>
               </v-list-item>
             </v-card-actions>
+            <v-divider class="mx-4"/>
             <v-row
-                class="mx-4 py-2 subtitle-2"
+                class="mx-4 pt-2 pb-0 subtitle-2"
             >
               {{ server.name }}
-            </v-row>
-            <v-row
-                class="mx-4 py-1"
-            >
-              <v-chip
-                  label
-                  dark
-                  small
-                  class="white--text"
-                  color="accent"
-              >
-                {{ server.game }}
-              </v-chip>
             </v-row>
             <div
                 v-if="hover"
@@ -585,8 +567,7 @@
               HOVER FOR DETAILS
             </div>
             <v-row
-                v-if="hover"
-                class="mx-0 mb-4"
+                class="mx-0"
             >
               <v-col
                   cols="12"
@@ -595,7 +576,8 @@
                   class="pa-0"
               >
                 <v-btn
-                    small
+                    tile
+                    width="100%"
                     elevation="0"
                     color="indigo lighten-1"
                     :disabled="!server.discord"
@@ -619,7 +601,8 @@
                   class="pa-0"
               >
                 <v-btn
-                    small
+                    tile
+                    width="100%"
                     elevation="0"
                     color="grey"
                     v-clipboard:copy="formatInvite(server.invite)"

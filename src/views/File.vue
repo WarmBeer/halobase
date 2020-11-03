@@ -140,8 +140,9 @@
           >
             SHORT DESCRIPTION
           </div>
+          <v-divider dark class="mx-8"/>
           <div
-              class="mx-8 subtitle-1 white--text text-left"
+              class="mx-8 py-2 subtitle-1 white--text text-left"
           >
             {{ file.description.short }}
           </div>
@@ -150,8 +151,9 @@
           >
             FULL DESCRIPTION
           </div>
+          <v-divider dark class="mx-8"/>
           <div
-              class="mx-8 subtitle-1 white--text text-left"
+              class="mx-8 py-2 subtitle-1 white--text text-left"
           >
             <div class="markdown" v-html="marked(newDescription)"></div>
           </div>
