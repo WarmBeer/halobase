@@ -347,7 +347,7 @@
                         :counter="rules.hostLmit"
                         :rules="rules.hostRules"
                         label="Gamertag*"
-                        hint="Your in-game name"
+                        hint="Your in-game XBOX Live name"
                         append-icon="mdi-microsoft-xbox"
                         required
                     ></v-text-field>
@@ -577,7 +577,7 @@
                 v-if="hover"
                 class="pa-4 subtitle-2 text-left">
               <v-row class="mx-0 mb-1 grey--text">Started {{ timeSince(server.created) }} ago</v-row>
-              <v-row class="mx-0 white--text">{{ server.message }}</v-row>
+              <v-row class="mx-0 white--text text-break">{{ server.message }}</v-row>
             </div>
             <div
                 v-else
@@ -897,12 +897,13 @@ export default {
     this.$dao.servers.getMessages();
     this.$dao.servers.getLikedMessages();
     */
+    this.$dao.servers.getServers();
   },
   created() {
-    this.$dao.servers.getServers();
-    window.setInterval(() => {
-      this.$dao.servers.getServers();
-    }, 30000) // every 30 seconds refresh servers
+    this.refreshInterval = setInterval(() => this.$dao.servers.getServers(), 30000);
+  },
+  beforeDestroy() {
+    clearInterval(this.refreshInterval);
   }
 }
 </script>

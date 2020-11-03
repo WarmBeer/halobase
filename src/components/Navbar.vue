@@ -31,6 +31,7 @@
         <v-icon
             right
             dark
+            size="18px"
         >
           mdi-steam
         </v-icon>
