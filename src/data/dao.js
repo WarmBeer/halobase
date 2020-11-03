@@ -183,6 +183,22 @@ const dao = {
                 }).catch(() => {
                 });
         },
+        joinLog: [],
+        getJoinLog() {
+            this.joinLog = [];
+            fetch(`${API_URL}/servers/joinlog`, {
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+            })
+                .then(response => response.json())
+                .then((result) => {
+                    this.joinLog = result;
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        },
         serverInfo: {},
         gettingInfo: false,
         getServerInfo() {

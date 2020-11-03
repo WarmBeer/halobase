@@ -266,7 +266,7 @@
             elevation="0"
             color="white"
             class="text-caption font-weight-bold rounded-lg"
-            @click="$dao.servers.getServers()"
+            @click="getServers()"
             :loading="$dao.servers.gettingServers"
         >
           Refresh
@@ -696,6 +696,58 @@
         No servers found. Why don't you host one? It's easy!
       </v-alert>
     </v-row>
+    <v-row
+        v-if="isHosting"
+        class="mx-0 mt-2"
+    >
+      <v-sheet
+          color="primary"
+          width="100%"
+          class="pb-12 overflow-hidden rounded-lg"
+      >
+        <div
+            class="py-6 text-h6 white--text font-weight-bold"
+        >
+          SERVER JOIN LOG
+        </div>
+        <v-list
+            dark
+            color="rgba(0,0,0,.2)"
+            width="100%"
+            max-width="600px"
+            max-height="300px"
+            class="mx-auto overflow-x-auto"
+        >
+          <v-list-item
+              v-for="(client, index) in joinLog"
+              :key="index"
+          >
+            <div
+                class="subtitle-2"
+            >
+              {{ client.address }} joined {{ timeSince(client.joinDate) }} ago
+            </div>
+
+            <v-btn
+                small
+                disabled
+                color="red"
+                class="white--text ml-auto"
+            >
+              BAN
+            </v-btn>
+            <v-btn
+                small
+                disabled
+                color="red"
+                class="white--text ml-1"
+            >
+              REPORT
+            </v-btn>
+          </v-list-item>
+        </v-list>
+      </v-sheet>
+    </v-row>
   </v-container>
   <!--
   <v-container v-else>
@@ -762,11 +814,19 @@ export default {
     ]
   }),
   methods: {
+    getJoinLog() {
+      this.$dao.servers.getJoinLog();
+    },
     getServerInfo() {
       this.$dao.servers.getServerInfo();
       if (localStorage.getItem('HaloBase_Server') !== null) {
         this.server = JSON.parse(localStorage.getItem('HaloBase_Server'));
       }
+    },
+    getServers() {
+      if (this.isHosting) this.getJoinLog();
+
+      this.$dao.servers.getServers();
     },
     addServer() {
       this.waitingOnResponse = true;
@@ -775,7 +835,7 @@ export default {
           .then((result) => {
             console.log(result);
             if (result.ok) {
-              this.$dao.servers.getServers();
+              this.getServers();
               this.dialog = false;
             }
             this.snackbar = {
@@ -792,7 +852,7 @@ export default {
       this.$dao.servers.deleteServer()
           .then((result) => {
             if (result.ok) {
-              this.$dao.servers.getServers();
+              this.getServers();
             }
             this.snackbar = {
               show: true,
@@ -856,6 +916,19 @@ export default {
     isLoggedIn() {
       return Object.keys(this.user).length > 0;
     },
+    isHosting() {
+      let isHosting = false;
+      for (const server of this.servers) {
+        if (server.steamID === this.user.steamID) {
+          isHosting = true;
+          break;
+        }
+      }
+      return isHosting;
+    },
+    joinLog() {
+      return this.$dao.servers.joinLog;
+    },
     serverInfo() {
       return this.$dao.servers.serverInfo;
     },
@@ -880,10 +953,10 @@ export default {
     this.$dao.servers.getMessages();
     this.$dao.servers.getLikedMessages();
     */
-    this.$dao.servers.getServers();
+    this.getServers();
   },
   created() {
-    this.refreshInterval = setInterval(() => this.$dao.servers.getServers(), 30000);
+    this.refreshInterval = setInterval(() => this.getServers(), 30000);
   },
   beforeDestroy() {
     clearInterval(this.refreshInterval);
