@@ -287,7 +287,7 @@
                         ></v-img>
                       </draggable>
                     </div>
-                    <strong>Min 1 max 8 images. 10MB file size limit per image.</strong>
+                    <strong class="mt-1 d-block" style="width: 100%">Min 1 max 8 images. 10MB file size limit per image.</strong>
                     <v-btn
                         elevation="0"
                         width="100%"
@@ -312,7 +312,7 @@
                     </v-chip>
                     <input type="file" ref="file" @change="processFile"
                            accept=".zip,.ZIP" style="display: none" min="1">
-                    <strong>Max 5GB file size.</strong>
+                    <strong class="mt-1 d-block" style="width: 100%">Max 5GB file size.</strong>
                     <v-btn
                         elevation="0"
                         width="100%"
@@ -553,7 +553,14 @@ export default {
       this.images = this.images.concat(Array.from(event.target.files));
     },
     processFile(event) {
-      [this.rawFile] = event.target.files;
+      if(event.target.files[0].size < 5000000000) {
+        [this.rawFile] = event.target.files;
+      } else {
+        this.snackbar = {
+          show: true,
+          text: 'File too big!'
+        };
+      }
     },
     openFile(identifier) {
       this.$router.push(`/file/${identifier}`);

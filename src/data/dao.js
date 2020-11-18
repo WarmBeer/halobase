@@ -149,7 +149,7 @@ const dao = {
             if (!this.gettingServers) {
                 this.gettingServers = true;
                 this.getPlayersOnline();
-                fetch(`${API_URL}/servers`, {
+                fetch(`/testdata/servers.json`, {
                     headers: {
                         Authorization: `Bearer ${TOKEN}`,
                     },
