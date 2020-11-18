@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid :class="$vuetify.breakpoint.mdAndUp ? 'px-8' : 'px-4'">
     <v-row
         v-for="(item, i) in 1"
         :key="i"

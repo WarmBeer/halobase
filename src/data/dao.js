@@ -1,7 +1,20 @@
+import { blobToSHA1 } from 'file-to-sha1';
 const API_URL = process.env.VUE_APP_API_URL || 'http://localhost';
 let TOKEN = '';
 
 const dao = {
+    collections: {
+        GAMES : [
+            'Halo: CE',
+            'Halo 2',
+            'Halo 2A',
+            'Halo 3',
+            'Halo 3: ODST',
+            'Halo: Reach',
+            'Halo 4',
+            'ElDewrito'
+        ],
+    },
     user: {
         user: {},
         authLink() {
@@ -134,7 +147,6 @@ const dao = {
         gettingServers: false,
         getServers() {
             if (!this.gettingServers) {
-                this.servers = [];
                 this.gettingServers = true;
                 this.getPlayersOnline();
                 fetch(`${API_URL}/servers`, {
@@ -149,6 +161,7 @@ const dao = {
                     })
                     .catch((err) => {
                         console.error(err);
+                        this.servers = [];
                         this.gettingServers = false;
                     });
             }
@@ -185,7 +198,6 @@ const dao = {
         },
         joinLog: [],
         getJoinLog() {
-            this.joinLog = [];
             fetch(`${API_URL}/servers/joinlog`, {
                 headers: {
                     Authorization: `Bearer ${TOKEN}`,
@@ -196,6 +208,7 @@ const dao = {
                     this.joinLog = result;
                 })
                 .catch((err) => {
+                    this.joinLog = [];
                     console.error(err);
                 });
         },
@@ -260,7 +273,7 @@ const dao = {
                 .catch((err) => {
                     console.error(err);
                 });
-        }
+        },
     },
     file: {
         file: {},
@@ -274,6 +287,58 @@ const dao = {
                 .then(response => response.json())
                 .then(result => result);
         },
+        postFile(formData) {
+            return fetch(`${API_URL}/files`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+            })
+                .then(response => response.json())
+                .then(result => result);
+        },
+        confirmFileUpload(identifier, fileId) {
+            const payload = {
+                identifier: identifier,
+                fileId: fileId
+            };
+            return fetch(`${API_URL}/files/confirm`, {
+                method: 'POST',
+                body: JSON.stringify(payload),
+                headers: {
+                    'content-type': 'application/json',
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+            })
+                .then(response => response.json())
+                .then(result => result);
+        },
+        async uploadFile(link, token, file, identifier) {
+            const regexExtension = /(?:\.([^.]+))?$/;
+            const ext = regexExtension.exec(file.name);
+            const sha1 = await blobToSHA1(file)
+            //console.log(sha1);
+            //console.log(ext);
+            //console.log(`files/${identifier}`);
+            //console.log(encodeURI(file.name));
+            //console.log(link);
+            //console.log(token);
+
+            return fetch(link, {
+                method: 'POST',
+                body: file,
+                headers: {
+                    Authorization: token,
+                    "X-Bz-File-Name": `files/${identifier}${ext[0]}`,
+                    "Content-Type": file.type,
+                    "Content-Length": file.size,
+                    "X-Bz-Content-Sha1": sha1,
+                },
+            })
+                .then(response => response.json())
+                .then(result => result);
+        }
     }
 }
 

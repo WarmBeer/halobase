@@ -40,7 +40,23 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import('../views/File.vue')
-  }
+  },
+  {
+    path: '/terms',
+    name: 'Terms of Service',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/Terms.vue')
+  },
+  {
+    path: '/privacy',
+    name: 'privacy Policy',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import('../views/Privacy.vue')
+  },
 ]
 
 const router = new VueRouter({

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid :class="$vuetify.breakpoint.mdAndUp ? 'px-8' : 'px-4'">
     <v-row>
       <v-col
           cols="12"
@@ -48,6 +48,7 @@
                   width="100%"
                   :color="filters.type || filters.game || filters.search ? 'blue' : 'white'"
                   :class="filters.type || filters.game || filters.search ? 'white--text' : 'black--text'"
+                  class="rounded-lg"
                   v-bind="attrs"
                   v-on="on"
               >
@@ -149,7 +150,7 @@
       >
         <select
             v-model="sorting"
-            class="select-css"
+            class="select-css rounded-lg"
             style="width: 100%;"
             @change="updateSorting()"
         >
@@ -161,24 +162,189 @@
       </v-col>
 
       <v-spacer></v-spacer>
+      <!-- SERVER HOST DIALOG START HERE-->
       <v-col
           cols="12"
           sm="auto"
       >
-        <v-btn
-            width="100%"
-            disabled
-            elevation="0"
-            color="accent"
-            class="text-caption font-weight-bold rounded-lg"
+        <v-dialog
+            v-model="dialog"
+            max-width="600px"
         >
-          Upload File
-          <v-icon
-              right
+          <template v-slot:activator="{ on }">
+            <v-btn
+                v-on="on"
+                width="100%"
+                elevation="0"
+                color="accent"
+                class="text-caption font-weight-bold rounded-lg"
+            >
+              Upload File
+              <v-icon
+                  right
+              >
+                mdi-upload
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-card
+              v-if="uploading"
+              dark
+              color="primary"
           >
-            mdi-upload
-          </v-icon>
-        </v-btn>
+            <v-card-title>
+              <span class="headline">UPLOADING..</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-progress-linear
+                      color="orangekeg"
+                      height="25"
+                      class="rounded-lg"
+                      :value="progress.percentage"
+                  >
+                    <strong>{{ progress.text }}</strong>
+                  </v-progress-linear>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+          <v-card
+              v-else
+              dark
+              color="primary"
+          >
+            <v-card-title>
+              <span class="headline">UPLOAD FILE</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-form
+                      v-model="valid"
+                      style="width: 100%"
+                  >
+                    <v-text-field
+                        v-model="file.name"
+                        :counter="48"
+                        :rules="[
+                          v => !!v || 'Title is required',
+                          v => (v && v.length <= 48) || `Title must be less than 48 characters`,
+                        ]"
+                        label="Title*"
+                        hint="Title as seen in the Fileshare"
+                        required
+                    ></v-text-field>
+                    <v-select
+                        v-model="file.type"
+                        :items="fileCategories"
+                        :rules="[v => !!v || 'Category is required']"
+                        label="Category*"
+                        required
+                    ></v-select>
+                    <v-select
+                        v-model="file.game"
+                        :items="['Any'].concat($dao.collections.GAMES)"
+                        :rules="[v => !!v || 'Game is required']"
+                        label="Game*"
+                        required
+                    ></v-select>
+                    <v-textarea
+                        v-model="file.description.short"
+                        :counter="256"
+                        :rules="[v => !!v || 'Short description is required', v => (!v || v.length <= 256) || `Short description must be less than 256 characters`]"
+                        label="Short Description*"
+                        auto-grow
+                    ></v-textarea>
+                    <v-textarea
+                        v-model="file.description.long"
+                        :counter="8192"
+                        :rules="[v => (!v || v.length <= 8192) || `Full description must be less than 8192 characters`]"
+                        label="Full Description (Markdown supported)"
+                        auto-grow
+                    ></v-textarea>
+                    <v-text-field :value="images[0]" style="display: none" :rules="[v => !!v || 'Image is required']"></v-text-field>
+                    <v-text-field :value="rawFile" style="display: none" :rules="[v => !!v || 'File is required']"></v-text-field>
+                    <input type="file" ref="image" @change="processImages"
+                           accept=".jpg,.JPG,.jpeg,.JPEG,.png,.PNG" style="display: none" multiple max="8" min="1">
+                    <div
+                        class="mt-2 d-flex flex-row overflow-x-auto"
+                    >
+                      <draggable
+                          v-model="images"
+                          class="d-flex flex-row"
+                          style="width: 100%"
+                      >
+                        <v-img
+                            v-for="(img, index) in tempImageUrls"
+                            :key="index"
+                            :src="img"
+                            class="ml-2 file-image rounded-lg black"
+                            :aspect-ratio="16/10"
+                            width="25%"
+                            max-width="25%"
+                        ></v-img>
+                      </draggable>
+                    </div>
+                    <strong>Min 1 max 8 images. 10MB file size limit per image.</strong>
+                    <v-btn
+                        elevation="0"
+                        width="100%"
+                        class="my-2 rounded-lg"
+                        style="background-color: rgba(255, 255, 255, .05)"
+                        @click="$refs.image.click()"
+                    >
+                      ADD IMAGES*
+                    </v-btn>
+                    <v-chip
+                        v-if="rawFile"
+                        label
+                        class="mt-2"
+                    >
+                      <span
+                          class="text-truncate"
+                          style="max-width: 150px"
+                      >
+                        {{ rawFile.name+rawFile.type }}
+                      </span>
+                      {{ fileSize(rawFile.size) }}
+                    </v-chip>
+                    <input type="file" ref="file" @change="processFile"
+                           accept=".zip,.ZIP" style="display: none" min="1">
+                    <strong>Max 5GB file size.</strong>
+                    <v-btn
+                        elevation="0"
+                        width="100%"
+                        class="my-2 orangekeg rounded-lg"
+                        @click="$refs.file.click()"
+                    >
+                      SELECT FILE*
+                    </v-btn>
+                  </v-form>
+                </v-row>
+              </v-container>
+              <small>*indicates required field</small>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  color="red darken-1"
+                  text
+                  @click="dialog = false"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                  color="blue darken-1"
+                  :disabled="!valid"
+                  @click="submitFile()"
+              >
+                Submit file
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
 
@@ -187,7 +353,7 @@
       <v-col
           v-for="(file, i) in files"
           :key="i"
-          cols="12"
+          cols="10"
           xs="12"
           sm="6"
           md="4"
@@ -198,9 +364,9 @@
               flat
               dark
               color="primary"
-              class="rounded-lg"
+              class="overflow-hidden rounded-lg"
               elevation="0"
-              height="440px"
+              height="360px"
           >
             <!-- TAG FILTERS
             <v-row
@@ -256,7 +422,7 @@
             >
               {{ file.description.short }}
             </p>
-            <div style="position: absolute;bottom: 0;width: 100%">
+            <v-sheet color="primary" style="position: absolute;bottom: 0;width: 100%">
               <v-divider class="mx-4"/>
               <v-card-actions
                   class="pa-0"
@@ -312,7 +478,7 @@
                   </v-chip>
                 </v-list-item>
               </v-card-actions>
-            </div>
+            </v-sheet>
           </v-card>
       </v-col>
     </v-row>
@@ -335,9 +501,32 @@
 </template>
 
 <script>
+import draggable from 'vuedraggable';
+
 export default {
   name: "Fileshare",
+  components: {
+    draggable,
+  },
   data: () => ({
+    progress: {
+      percentage: 0,
+      text: ''
+    },
+    uploading: false,
+    file: {
+      name: 'Titel',
+      type: 'Campaign',
+      game: 'Halo 2',
+      description: {
+        short: 'kort',
+        long: 'lang'
+      }
+    },
+    images: [],
+    rawFile: '',
+    dialog: false,
+    valid: false,
     sorting: 'downloads',
     select: { state: 'Florida', abbr: 'FL' },
     filters: {
@@ -345,8 +534,27 @@ export default {
       game: '',
       search: ''
     },
+    fileCategories: [
+        'Campaign',
+        'Characters',
+        'Firefight',
+        'Forge',
+        'Gametypes',
+        'Graphics',
+        'Maps',
+        'Menu',
+        'Miscellaneous',
+        'Utilities',
+        'Vehicles'
+    ]
   }),
   methods: {
+    processImages(event) {
+      this.images = this.images.concat(Array.from(event.target.files));
+    },
+    processFile(event) {
+      [this.rawFile] = event.target.files;
+    },
     openFile(identifier) {
       this.$router.push(`/file/${identifier}`);
     },
@@ -371,12 +579,104 @@ export default {
         search: ''
       }
       this.updateFilters();
-    }
+    },
+    resetForm() {
+      this.file = {
+        name: '',
+        type: '',
+        game: '',
+        description: {
+          short: '',
+          long: ''
+        }
+      };
+      this.images = [];
+      this.rawFile = '';
+    },
+    submitFile() {
+      if (!this.uploading) {
+        this.uploading = true;
+        this.progress = {
+          percentage: 0,
+          text: 'Requesting file upload..'
+        };
+        let formData = new FormData();
+        formData.append('file', JSON.stringify(this.file));
+        formData.append('thumb', this.images[0]);
+        this.images.slice(1).forEach((img, index) => {
+          formData.append(`image[${index}]`, img);
+        });
+        this.$dao.file.postFile(formData)
+            .then((result) => {
+              if (result.ok) {
+                this.progress = {
+                  percentage: 30,
+                  text: 'Uploading file, this may take a (long) while..'
+                };
+                //console.log(result);
+                this.$dao.file.uploadFile(result.link, result.token, this.rawFile, result.identifier)
+                    .then((data) => {
+                      //console.log(data);
+                      if(data.fileId) {
+                        this.progress = {
+                          percentage: 80,
+                          text: 'File uploaded, verifying files..'
+                        };
+                        this.$dao.file.confirmFileUpload(result.identifier, data.fileId)
+                            .then((res) => {
+                              //console.log(res);
+                              this.progress = {
+                                percentage: 100,
+                                text: res.message
+                              };
+                              this.snackbar = {
+                                show: true,
+                                text: res.message
+                              };
+                              this.resetForm();
+                              window.open(res.link, '_blank');
+                              this.uploading = false;
+                              this.dialog = false;
+                            });
+                      } else {
+                        this.uploading = false;
+                        this.snackbar = {
+                          show: true,
+                          text: 'Could not upload file, please try again.'
+                        };
+                      }
+                    });
+              } else {
+                this.uploading = false;
+                this.snackbar = {
+                  show: true,
+                  text: result.message
+                };
+              }
+            })
+            .catch(() => {
+              this.uploading = false;
+              this.snackbar = {
+                show: true,
+                text: 'Halobase is offline.'
+              };
+            });
+      }
+    },
   },
   computed: {
     files() {
       return this.$dao.fileshare.files;
-    }
+    },
+    tempImageUrls() {
+      const imageUrls = [];
+      if (this.images) {
+        this.images.forEach((img, index) => {
+          imageUrls[index] = URL.createObjectURL(img);
+        });
+      }
+      return imageUrls;
+    },
   },
   mounted() {
     this.sorting = this.$dao.fileshare.sorting;
@@ -407,5 +707,9 @@ export default {
 
   .no-hover::before {
     opacity: 0!important;
+  }
+
+  .file-image:first-child {
+    margin-left: 0!important;
   }
 </style>

@@ -4,7 +4,7 @@
       app
       absolute
       elevation="0"
-      class="hidden-sm-and-down"
+      class="px-4 hidden-sm-and-down"
       color="primary"
     >
       <logo/>
@@ -13,7 +13,7 @@
           :key="link"
           :to="'/'+link"
           text
-          class="custom-btn white--text mr-2"
+          class="custom-btn white--text mr-2 rounded-lg"
       >
         {{ link }}
       </v-btn>

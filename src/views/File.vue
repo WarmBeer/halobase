@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid :class="$vuetify.breakpoint.mdAndUp ? 'px-8' : 'px-4'">
 
     <!-- SNACKBAR STARTS HERE -->
     <v-snackbar
@@ -63,6 +63,7 @@
                 :src="img"
 
                 class="ml-2 file-image rounded-lg"
+                style="background-color: black"
                 :class="selectedImage === index ? 'selected' : ''"
                 :aspect-ratio="16/10"
                 width="25%"

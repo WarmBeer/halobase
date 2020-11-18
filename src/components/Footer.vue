@@ -1,8 +1,8 @@
 <template>
   <v-footer
-      dark
-      padless
+      color="primary"
       elevation="0"
+      class="px-4"
   >
     <v-card
         class="flex"
@@ -11,7 +11,9 @@
         tile
     >
 
-      <v-row class="mx-2 py-8">
+      <!--
+      :class="$vuetify.breakpoint.mdAndUp ? 'px-4' : ''"
+      <v-row class="mx-2 py-8" :class="$vuetify.breakpoint.mdAndUp ? 'mx-8' : ''">
         <v-col
             cols="12"
             :md="12/(sections.length+2)"
@@ -72,29 +74,61 @@
         </v-col>
       </v-row>
 
-      <v-divider class="mx-6"/>
+      <v-divider class="mx-2" :class="$vuetify.breakpoint.mdAndUp ? 'mx-8' : ''"/>
+      -->
 
-      <v-row class="mx-2">
+      <v-row
+          class="mx-0 px-1"
+      >
         <v-col
           cols="auto"
         >
           <div
-              class="caption white--text"
+              style="height: 28px;line-height: 28px;text-align: center"
+              class="caption grey--text"
           >
-            Copyright © {{ new Date().getFullYear() }} HaloBase & The Beer Keg. Halo © Microsoft Corporation. Halobase is not endorsed by or affiliated with Microsoft.
+            Copyright © {{ new Date().getFullYear() }} HaloBase & The Beer Keg. Halo © Microsoft Corporation.
           </div>
         </v-col>
         <v-spacer/>
         <v-col
             cols="auto"
         >
-          <a
-              href=""
-              class="caption d-block blue--text font-weight-regular text-decoration-none"
-              style="width: 100%"
+          <v-btn
+              text
+              small
+              dark
+              color="blue"
+              :to="'/about'"
+          >
+            About Us
+          </v-btn>
+        </v-col>
+        <v-col
+            cols="auto"
+        >
+          <v-btn
+              text
+              small
+              dark
+              color="blue"
+              :to="'/privacy'"
+          >
+            Privacy Policy
+          </v-btn>
+        </v-col>
+        <v-col
+            cols="auto"
+        >
+          <v-btn
+              text
+              small
+              dark
+              color="blue"
+              :to="'/terms'"
           >
             Terms of Service
-          </a>
+          </v-btn>
         </v-col>
       </v-row>
     </v-card>
@@ -102,6 +136,7 @@
 </template>
 
 <script>
+/* eslint-disable vue/no-unused-components */
 import Logo from "@/components/Logo";
 export default {
   name: 'Footer',

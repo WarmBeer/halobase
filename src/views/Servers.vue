@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container fluid :class="$vuetify.breakpoint.mdAndUp ? 'px-8' : 'px-4'">
 
     <!-- SNACKBAR STARTS HERE -->
     <v-snackbar
@@ -21,12 +21,7 @@
     </v-snackbar>
 
     <v-alert
-        text
-        type="warning"
-    >
-      CHEATERS WILL NOW BE BANNED FROM USING HALOBASE. Server hosts can report cheaters in our Discord.
-    </v-alert>
-    <v-alert
+        class="mb-0 rounded-lg"
         text
         type="info"
     >
@@ -252,9 +247,10 @@
           sm="auto"
       >
         <div
-            class="pa-1 subtitle-1 white--text font-weight-bold"
+            style="height: 40px;line-height: 40px;text-align: center"
+            class="white--text font-weight-bold"
         >
-          {{ $dao.servers.playersOnline }} Spartans online
+          <span class="orangekeg--text">{{ $dao.servers.playersOnline }}</span> Spartans online
         </div>
       </v-col>
       <v-col
@@ -370,8 +366,8 @@
 
                     <v-select
                         v-model="server.game"
-                        :items="games"
-                        :rules="[v => !!v || 'Item is required']"
+                        :items="$dao.collections.GAMES"
+                        :rules="[v => !!v || 'Game is required']"
                         label="Game*"
                         required
                     ></v-select>
@@ -397,7 +393,6 @@
               </v-btn>
               <v-btn
                   color="blue darken-1"
-                  text
                   :disabled="!valid"
                   :loading="waitingOnResponse"
                   @click="addServer()"
@@ -417,24 +412,13 @@
             </v-card-title>
             <v-card-text>
               <v-container>
-                <v-card-text
-                    class="red--text"
+                <v-alert
+                    class="rounded-lg"
+                    text
+                    type="error"
                 >
-                  No game found. Please make sure you have a lobby open or read below:
-                </v-card-text>
-                <v-row
-                    class="mx-0"
-                    justify="start"
-                >
-                  <v-card-subtitle
-                      class="font-weight-bold"
-                  >Set game session to FRIENDS ONLY</v-card-subtitle>
-                  <ol style="text-align: left">
-                    <li>Open MCC</li>
-                    <li>Click on 'MY GAME SESSION' (Might have to click on player icon first)</li>
-                    <li>Toggle 'PRIVACY' to 'FRIENDS ONLY'</li>
-                  </ol>
-                </v-row>
+                  No game found. Please make sure you have a lobby open.
+                </v-alert>
                 <v-row
                     class="mx-0"
                     justify="start"
@@ -460,6 +444,19 @@
                     <li>View your profile on Steam</li>
                     <li>Check if profile is online (NOT offline)</li>
                     <li>Check if you can see MCC playing (If not: set game details to public)</li>
+                  </ol>
+                </v-row>
+                <v-row
+                    class="mx-0"
+                    justify="start"
+                >
+                  <v-card-subtitle
+                      class="font-weight-bold"
+                  >Set game session to FRIENDS ONLY</v-card-subtitle>
+                  <ol style="text-align: left">
+                    <li>Open MCC</li>
+                    <li>Click on 'MY GAME SESSION' (Might have to click on player icon first)</li>
+                    <li>Toggle 'PRIVACY' to 'FRIENDS ONLY'</li>
                   </ol>
                 </v-row>
               </v-container>
@@ -501,71 +498,66 @@
           lg="3"
           xl="2"
       >
-        <v-hover v-slot:default="{ hover }">
-          <v-card
-              color="primary"
-              flat
-              dark
-              class="rounded-lg"
-              elevation="0"
+        <v-card
+            color="primary"
+            flat
+            dark
+            class="overflow-hidden rounded-lg"
+            elevation="0"
+            height="360px"
+        >
+          <v-card-actions
+              class="pa-0"
           >
-            <v-card-actions
-                class="pa-0"
+            <v-list-item
+                class="px-4"
             >
-              <v-list-item
-                  class="px-4"
+              <v-list-item-avatar
+                  color="white"
+                  size="28"
+                  class="mr-2"
               >
-                <v-list-item-avatar
-                    color="white"
-                    size="28"
-                    class="mr-2"
+                <v-img
+                    v-if="server.imageURL"
+                    class="elevation-6"
+                    alt=""
+                    :src="server.imageURL"
+                ></v-img>
+                <v-icon
+                    v-else
+                    size="18px"
                 >
-                  <v-img
-                      v-if="server.imageURL"
-                      class="elevation-6"
-                      alt=""
-                      :src="server.imageURL"
-                  ></v-img>
-                  <v-icon
-                      v-else
-                      size="18px"
-                  >
-                    mdi-account
-                  </v-icon>
-                </v-list-item-avatar>
+                  mdi-account
+                </v-icon>
+              </v-list-item-avatar>
 
-                <v-list-item-content>
-                  <v-list-item-title class="caption orangekeg--text text-left">{{ server.host }}</v-list-item-title>
-                </v-list-item-content>
+              <v-list-item-content>
+                <v-list-item-title class="caption orangekeg--text text-left">{{ server.steamName }}</v-list-item-title>
+              </v-list-item-content>
 
-                <v-chip
-                    label
-                    dark
-                    small
-                    class="white--text float-right"
-                    color="accent"
-                >
-                  {{ server.game }}
-                </v-chip>
-              </v-list-item>
-            </v-card-actions>
-            <v-divider class="mx-4"/>
-            <v-row
-                class="mx-4 pt-2 pb-0 subtitle-2"
-            >
-              {{ server.name }}
-            </v-row>
-            <div
-                v-if="hover"
-                class="pa-4 subtitle-2 text-left">
-              <v-row class="mx-0 mb-1 grey--text">Started {{ timeSince(server.created) }} ago</v-row>
-              <v-row class="mx-0 white--text text-break">{{ server.message }}</v-row>
-            </div>
-            <div
-                v-else
-                class="pa-4 caption grey--text text-center">
-              HOVER FOR DETAILS
-            </div>
+              <v-chip
+                  label
+                  dark
+                  small
+                  class="white--text float-right"
+                  color="accent"
+              >
+                {{ server.game }}
+              </v-chip>
+            </v-list-item>
+          </v-card-actions>
+          <v-divider class="mx-4"/>
+          <v-row
+              class="mx-4 pt-2 pb-0 subtitle-2"
+          >
+            {{ server.name }}
+          </v-row>
+          <div
+              class="pa-4 subtitle-2 text-left">
+            <v-row class="mx-0 mb-1 grey--text">Started {{ timeSince(server.created) }} ago</v-row>
+            <v-row class="mx-0 white--text text-break">{{ server.message }}</v-row>
+          </div>
+          <v-sheet color="primary" style="position: absolute;bottom: 0;width: 100%">
             <v-row
                 class="mx-0"
             >
@@ -668,8 +660,8 @@
                 mdi-steam
               </v-icon>
             </v-btn>
-          </v-card>
-        </v-hover>
+          </v-sheet>
+        </v-card>
       </v-col>
     </v-row>
     <v-row
@@ -690,6 +682,7 @@
         class="mx-0 mt-2"
     >
       <v-alert
+          class="rounded-lg"
           text
           type="error"
       >
@@ -803,15 +796,7 @@ export default {
       discordRules: [
         v => (v.length <= 48) || `Discord invite must be less than 48 characters`,
       ],
-    },
-    games : [
-        'Halo: CE',
-        'Halo 2',
-        'Halo 3',
-        'Halo 3: ODST',
-        'Halo: Reach',
-        'Halo 4'
-    ]
+    }
   }),
   methods: {
     getJoinLog() {
