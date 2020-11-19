@@ -81,12 +81,13 @@
         <v-card
             flat
             color="primary"
-            class="py-4 white--text"
+            class="px-4 py-4 white--text rounded-lg"
         >
           <v-row
               v-for="(detail, index) in details"
               :key="index"
-              class="mx-4"
+              class="px-2 mx-0 rounded"
+              :style="(index % 2 === 117) ? 'background-color: rgba(255, 255, 255, 0.025)' : ''"
           >
             <v-col
                 cols="6"
@@ -100,7 +101,15 @@
                 cols="6"
                 class="pa-0"
             >
-              <div class="subtitle-2 text-right white--text">
+              <div
+                  v-if="detail.link"
+                  class="subtitle-2 text-right orangekeg--text"
+                  style="cursor:pointer;"
+                  :to="`/${detail.link}`"
+              >
+                {{ detail.value }}
+              </div>
+              <div v-else class="subtitle-2 text-right white--text">
                 {{ detail.value }}
               </div>
             </v-col>
@@ -129,7 +138,7 @@
       >
         <v-sheet
             color="primary"
-            class="pb-6 overflow-hidden rounded-lg"
+            class="px-8 pb-6 overflow-hidden rounded-lg"
         >
           <div
               class="py-6 text-h6 white--text font-weight-bold"
@@ -137,24 +146,24 @@
             {{ file.name }}
           </div>
           <div
-              class="mx-8 py-2 subtitle-1 grey--text font-weight-bold text-left"
+              class="py-2 subtitle-1 grey--text font-weight-bold text-left"
           >
             SHORT DESCRIPTION
           </div>
-          <v-divider dark class="mx-8"/>
+          <v-divider dark/>
           <div
-              class="mx-8 py-2 subtitle-1 white--text text-left"
+              class="py-2 subtitle-1 white--text text-left"
           >
             {{ file.description.short }}
           </div>
           <div
-              class="mx-8 mt-8 py-2 subtitle-1 grey--text font-weight-bold text-left"
+              class="mt-8 py-2 subtitle-1 grey--text font-weight-bold text-left"
           >
             FULL DESCRIPTION
           </div>
-          <v-divider dark class="mx-8"/>
+          <v-divider dark/>
           <div
-              class="mx-8 py-2 subtitle-1 white--text text-left"
+              class="py-2 subtitle-1 white--text text-left"
           >
             <div class="markdown" v-html="marked(newDescription)"></div>
           </div>

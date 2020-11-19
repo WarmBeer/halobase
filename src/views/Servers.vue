@@ -309,6 +309,7 @@
               v-if="isGettingServerInfo"
               dark
               color="primary"
+              class="rounded-lg"
           >
             <v-card-title>
               <span class="headline">GETTING SERVER INFO</span>
@@ -386,7 +387,6 @@
               <v-spacer></v-spacer>
               <v-btn
                   color="red darken-1"
-                  text
                   @click="dialog = false"
               >
                 Cancel
@@ -504,7 +504,6 @@
             dark
             class="overflow-hidden rounded-lg"
             elevation="0"
-            height="360px"
         >
           <v-card-actions
               class="pa-0"
@@ -532,135 +531,94 @@
               </v-list-item-avatar>
 
               <v-list-item-content>
-                <v-list-item-title class="caption orangekeg--text text-left">{{ server.steamName }}</v-list-item-title>
+                <v-list-item-title class="caption orangekeg--text text-left font-weight-bold">{{ server.steamName || server.host }}</v-list-item-title>
               </v-list-item-content>
 
-              <v-chip
-                  label
-                  dark
-                  small
-                  class="white--text float-right"
-                  color="accent"
+              <v-icon
+                  v-if="server.discord"
+                  color="indigo lighten-1"
+                  class="mr-2"
+                  style="cursor: pointer"
+                  :href="server.discord"
+                  target="_blank"
               >
-                {{ server.game }}
-              </v-chip>
+                mdi-discord
+              </v-icon>
+              <v-icon
+                  style="cursor: pointer"
+                  v-clipboard:copy="formatInvite(server.invite)"
+                  v-clipboard:success="onCopy"
+
+              >
+                mdi-share
+              </v-icon>
             </v-list-item>
           </v-card-actions>
           <v-divider class="mx-4"/>
           <v-row
-              class="mx-4 pt-2 pb-0 subtitle-2"
+              class="mx-4 pt-2 pb-0 subtitle-2 font-weight-bold"
           >
             {{ server.name }}
           </v-row>
+          <v-row
+              class="mx-4 pt-2 pb-0 orangekeg--text subtitle-2 font-weight-bold"
+          >
+            {{ server.game }}
+          </v-row>
           <div
-              class="pa-4 subtitle-2 text-left">
+              class="px-4 py-2 subtitle-2 text-left">
             <v-row class="mx-0 mb-1 grey--text">Started {{ timeSince(server.created) }} ago</v-row>
             <v-row class="mx-0 white--text text-break">{{ server.message }}</v-row>
           </div>
-          <v-sheet color="primary" style="position: absolute;bottom: 0;width: 100%">
-            <v-row
-                class="mx-0"
+          <v-btn
+              text
+              width="100%"
+              elevation="0"
+              color="blue"
+              v-clipboard:copy="server.host"
+              v-clipboard:success="onCopy"
+          >
+            {{ server.host }}
+            <v-icon
+                right
+                dark
+                size="18px"
             >
-              <v-col
-                  cols="12"
-                  xs="6"
-                  sm="6"
-                  class="pa-0"
-              >
-                <v-btn
-                    tile
-                    width="100%"
-                    elevation="0"
-                    color="indigo lighten-1"
-                    :disabled="!server.discord"
-                    :href="server.discord"
-                    target="_blank"
-                >
-                  Join
-                  <v-icon
-                      right
-                      dark
-                      size="18px"
-                  >
-                    mdi-discord
-                  </v-icon>
-                </v-btn>
-              </v-col>
-              <v-col
-                  cols="12"
-                  xs="6"
-                  sm="6"
-                  class="pa-0"
-              >
-                <v-btn
-                    tile
-                    width="100%"
-                    elevation="0"
-                    color="grey"
-                    v-clipboard:copy="formatInvite(server.invite)"
-                    v-clipboard:success="onCopy"
-                >
-                  Share
-                  <v-icon
-                      right
-                      dark
-                      size="18px"
-                  >
-                    mdi-share
-                  </v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
-            <v-btn
-                text
-                width="100%"
-                elevation="0"
-                color="blue"
-                v-clipboard:copy="server.host"
-                v-clipboard:success="onCopy"
+              mdi-microsoft-xbox
+            </v-icon>
+          </v-btn>
+          <v-btn
+              v-if="server.steamID === user.steamID"
+              width="100%"
+              elevation="0"
+              color="red"
+              @click="deleteServer()"
+          >
+            Delete Server
+            <v-icon
+                right
+                dark
+                size="18px"
             >
-              {{ server.host }}
-              <v-icon
-                  right
-                  dark
-                  size="18px"
-              >
-                mdi-microsoft-xbox
-              </v-icon>
-            </v-btn>
-            <v-btn
-                v-if="server.steamID === user.steamID"
-                width="100%"
-                elevation="0"
-                color="red"
-                @click="deleteServer()"
+              mdi-trash-can-outline
+            </v-icon>
+          </v-btn>
+          <v-btn
+              v-else
+              width="100%"
+              elevation="0"
+              color="green"
+              :href="getInviteLink(server.invite)"
+          >
+            Join Game
+            <v-icon
+                right
+                dark
+                size="18px"
             >
-              Delete Server
-              <v-icon
-                  right
-                  dark
-                  size="18px"
-              >
-                mdi-trash-can-outline
-              </v-icon>
-            </v-btn>
-            <v-btn
-                v-else
-                width="100%"
-                elevation="0"
-                color="green"
-                :href="getInviteLink(server.invite)"
-            >
-              Join Game
-              <v-icon
-                  right
-                  dark
-                  size="18px"
-              >
-                mdi-steam
-              </v-icon>
-            </v-btn>
-          </v-sheet>
+              mdi-steam
+            </v-icon>
+          </v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -689,21 +647,34 @@
         No servers found. Why don't you host one? It's easy!
       </v-alert>
     </v-row>
+    <v-row v-if="isHosting" class="mt-12">
+      <v-col
+          cols="12"
+          sm="auto"
+      >
+        <v-toolbar-title
+            class="text-h4 white--text font-weight-bold"
+        >
+          Server Tools
+        </v-toolbar-title>
+      </v-col>
+    </v-row>
     <v-row
         v-if="isHosting"
         class="mx-0 mt-2"
     >
       <v-sheet
-          color="primary"
+          color="transparent"
           width="100%"
           class="pb-12 overflow-hidden rounded-lg"
       >
         <div
             class="py-6 text-h6 white--text font-weight-bold"
         >
-          SERVER JOIN LOG
+          Joined Players
         </div>
         <v-list
+            v-if="joinLog.length > 0"
             dark
             color="rgba(0,0,0,.2)"
             width="100%"
@@ -739,6 +710,15 @@
             </v-btn>
           </v-list-item>
         </v-list>
+        <v-alert
+            v-else
+            class="mx-auto rounded-lg"
+            text
+            type="error"
+            max-width="600px"
+        >
+          No one joined yet.
+        </v-alert>
       </v-sheet>
     </v-row>
   </v-container>

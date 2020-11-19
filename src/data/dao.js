@@ -149,7 +149,7 @@ const dao = {
             if (!this.gettingServers) {
                 this.gettingServers = true;
                 this.getPlayersOnline();
-                fetch(`/testdata/servers.json`, {
+                fetch(`${API_URL}/servers`, {
                     headers: {
                         Authorization: `Bearer ${TOKEN}`,
                     },
@@ -318,12 +318,12 @@ const dao = {
             const regexExtension = /(?:\.([^.]+))?$/;
             const ext = regexExtension.exec(file.name);
             const sha1 = await blobToSHA1(file)
-            //console.log(sha1);
-            //console.log(ext);
-            //console.log(`files/${identifier}`);
-            //console.log(encodeURI(file.name));
-            //console.log(link);
-            //console.log(token);
+            console.log(sha1);
+            console.log(ext);
+            console.log(`files/${identifier}`);
+            console.log(file);
+            console.log(link);
+            console.log(token);
 
             return fetch(link, {
                 method: 'POST',

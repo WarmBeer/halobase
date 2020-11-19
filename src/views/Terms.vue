@@ -5,9 +5,10 @@
           cols="12"
       >
         <v-sheet
+            max-width="800px"
             dark
             color="primary"
-            class="px-8 pb-6 overflow-hidden rounded-lg text-left"
+            class="mx-auto px-8 pb-6 overflow-hidden rounded-lg text-left"
         >
           <div
               class="py-6 text-h4 white--text font-weight-bold text-center"

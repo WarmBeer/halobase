@@ -19,7 +19,7 @@
         <v-text-field
             v-model="filters.search"
             dark
-            background-color="rgba(255, 255, 255, 0.1)"
+            background-color="primary"
             placeholder="Search files.."
             dense
             flat
@@ -48,7 +48,7 @@
                   width="100%"
                   :color="filters.type || filters.game || filters.search ? 'blue' : 'white'"
                   :class="filters.type || filters.game || filters.search ? 'white--text' : 'black--text'"
-                  class="rounded-lg"
+                  class=""
                   v-bind="attrs"
                   v-on="on"
               >
@@ -191,6 +191,7 @@
               v-if="uploading"
               dark
               color="primary"
+              class="rounded-lg"
           >
             <v-card-title>
               <span class="headline">UPLOADING..</span>
@@ -330,7 +331,6 @@
               <v-spacer></v-spacer>
               <v-btn
                   color="red darken-1"
-                  text
                   @click="dialog = false"
               >
                 Cancel
@@ -443,7 +443,7 @@
                   </v-list-item-avatar>
 
                   <v-list-item-content>
-                    <v-list-item-title class="caption text-left orangekeg--text">{{ file.author.name }}</v-list-item-title>
+                    <v-list-item-title class="caption text-left orangekeg--text font-weight-bold">{{ file.author.name }}</v-list-item-title>
                   </v-list-item-content>
 
                   <v-chip
@@ -489,12 +489,12 @@
     >
       <v-btn
           light
-          color="white"
+          color="accent"
           elevation="0"
           class="text-caption font-weight-bold rounded-lg"
           @click="getMoreFiles()"
       >
-        Show More Files
+        Show More Files..
       </v-btn>
     </v-row>
   </v-container>
@@ -515,12 +515,12 @@ export default {
     },
     uploading: false,
     file: {
-      name: 'Titel',
-      type: 'Campaign',
-      game: 'Halo 2',
+      name: '',
+      type: '',
+      game: '',
       description: {
-        short: 'kort',
-        long: 'lang'
+        short: '',
+        long: ''
       }
     },
     images: [],
@@ -702,7 +702,6 @@ export default {
     width: 100%;
     padding: .3em 1em;
     border-radius: 4px;
-    background-color: rgba(0, 0, 0, .1);
   }
 
   .fileName {
