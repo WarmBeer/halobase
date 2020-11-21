@@ -18,8 +18,8 @@
       >
         <v-text-field
             v-model="filters.search"
-            dark
-            background-color="primary"
+            light
+            background-color="white"
             placeholder="Search files.."
             dense
             flat
@@ -182,6 +182,7 @@
               Upload File
               <v-icon
                   right
+                  small
               >
                 mdi-upload
               </v-icon>
@@ -353,7 +354,7 @@
       <v-col
           v-for="(file, i) in files"
           :key="i"
-          cols="10"
+          cols="12"
           xs="12"
           sm="6"
           md="4"
@@ -366,63 +367,57 @@
               color="primary"
               class="overflow-hidden rounded-lg"
               elevation="0"
-              height="360px"
           >
-            <!-- TAG FILTERS
-            <v-row
-                class="mx-0 pa-2 pt-0"
-            >
-              <v-chip
-                  color="accent"
-                  class="white--text"
-                  label
-                  small
-                  @click="filters.type = file.type;updateFilters()"
-              >
-                {{ file.type }}
-              </v-chip>
-              <v-chip
-                  color="accent"
-                  class="ml-2 white--text"
-                  label
-                  small
-                  @click="filters.game = file.game;updateFilters()"
-              >
-                {{ file.game }}
-              </v-chip>
-            </v-row>
-            -->
             <v-hover v-slot:default="{ hover }">
               <v-img
-                  :aspect-ratio="16/10"
+                  :aspect-ratio="16/9"
                   :src="file.images.thumb"
                   class="black mx-0"
                   max-width="100%"
                   @click="openFile(file.identifier)"
+                  style="cursor: pointer"
+                  :gradient="hover ? 'to bottom, rgba(0,0,0,.2), rgba(0,0,0,.2)' : ''"
               >
-                <v-fade-transition>
-                  <div
-                      v-if="hover"
-                      class="pa-4 d-flex v-card--reveal subtitle-2 white--text">
-                  </div>
-                </v-fade-transition>
               </v-img>
             </v-hover>
-            <v-card-title
-                class="subtitle-2 px-4 pb-0 pt-2 white--text text-left text-break"
-                style="cursor: pointer"
-                @click="openFile(file.identifier)"
-            >
-              <div>
+            <div>
+              <v-row
+                  class="mx-4 py-2 subtitle-2 text-left font-weight-bold"
+                  style="cursor: pointer;"
+                  @click="openFile(file.identifier)"
+              >
                 {{ file.name }}
-              </div>
-            </v-card-title>
-            <p
-                class="caption ma-0 px-4 py-2 white--text text-left text-break"
-            >
-              {{ file.description.short }}
-            </p>
-            <v-sheet color="primary" style="position: absolute;bottom: 0;width: 100%">
+              </v-row>
+              <v-row
+                  class="mx-4 pb-2 white--text font-weight-bold"
+              >
+                <v-chip
+                    :color="filters.game === file.game ? 'blue' : 'rgba(255, 255, 255, .05)'"
+                    label
+                    small
+                    @click="toggleGameFilter(file.game)"
+                >
+                  {{ file.game }}
+                </v-chip>
+                <v-chip
+                    :color="filters.type === file.type ? 'blue' : 'rgba(255, 255, 255, .05)'"
+                    class="ml-2"
+                    label
+                    small
+                    @click="toggleTypeFilter(file.type)"
+                >
+                  {{ file.type }}
+                </v-chip>
+              </v-row>
+              <v-row
+                  class="mx-4 py-2 pt-0 subtitle-2 text-left"
+                  style="cursor: pointer;"
+                  @click="openFile(file.identifier)"
+              >
+                {{ file.description.short }}
+              </v-row>
+              <!--
+              -->
               <v-divider class="mx-4"/>
               <v-card-actions
                   class="pa-0"
@@ -476,9 +471,18 @@
                       mdi-download
                     </v-icon>
                   </v-chip>
+                  <v-chip
+                      small
+                      dark
+                      label
+                      color="transparent"
+                      class="no-hover pa-0 ml-2"
+                  >
+                    {{ fileSize(file.size) }}
+                  </v-chip>
                 </v-list-item>
               </v-card-actions>
-            </v-sheet>
+            </div>
           </v-card>
       </v-col>
     </v-row>
@@ -488,8 +492,8 @@
         justify="center"
     >
       <v-btn
-          light
-          color="accent"
+          dark
+          color="rgba(255,255,255,.1)"
           elevation="0"
           class="text-caption font-weight-bold rounded-lg"
           @click="getMoreFiles()"
@@ -578,6 +582,22 @@ export default {
     updateFilters() {
       this.$dao.fileshare.filters = this.filters;
       this.getFiles();
+    },
+    toggleGameFilter(game) {
+      if (this.filters.game) {
+        this.filters.game = '';
+      } else {
+        this.filters.game = game;
+      }
+      this.updateFilters();
+    },
+    toggleTypeFilter(type) {
+      if (this.filters.type) {
+        this.filters.type = '';
+      } else {
+        this.filters.type = type;
+      }
+      this.updateFilters();
     },
     resetFilters() {
       this.filters = {

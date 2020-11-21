@@ -50,7 +50,7 @@
         </v-hover>
         <!-- IMAGES -->
         <div
-            class="mt-2 d-flex flex-row overflow-x-auto"
+            class="mt-4 d-flex flex-row overflow-x-auto"
         >
           <v-sheet
               color="transparent"
@@ -94,7 +94,7 @@
                 class="pa-0"
             >
               <div class="subtitle-2 text-left grey--text">
-                {{ detail.name }}
+                {{ detail.name }}:
               </div>
             </v-col>
             <v-col
@@ -119,7 +119,7 @@
             :loading="waitingForDownload"
             color="accent"
             width="100%"
-            class="mt-2 font-weight-bold rounded-lg"
+            class="mt-4 font-weight-bold rounded-lg"
             @click="getDownload()"
         >
           DOWNLOAD
@@ -146,7 +146,7 @@
             {{ file.name }}
           </div>
           <div
-              class="py-2 subtitle-1 grey--text font-weight-bold text-left"
+              class="py-2 subtitle-1 blue--text font-weight-bold text-left"
           >
             SHORT DESCRIPTION
           </div>
@@ -157,7 +157,7 @@
             {{ file.description.short }}
           </div>
           <div
-              class="mt-8 py-2 subtitle-1 grey--text font-weight-bold text-left"
+              class="mt-8 py-2 subtitle-1 blue--text font-weight-bold text-left"
           >
             FULL DESCRIPTION
           </div>

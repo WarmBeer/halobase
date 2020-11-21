@@ -124,7 +124,7 @@ body {
   display: block;
   font-size: 0.875rem;
   font-weight: 500;
-  color: white;
+  color: rgba(255, 255, 255, .85);
   line-height: 1.3;
   padding: .5em 2em .5em 1em;
   box-sizing: border-box;
@@ -133,7 +133,7 @@ body {
   -moz-appearance: none;
   -webkit-appearance: none;
   appearance: none;
-  background-color: rgba(255, 255, 255, .1);
+  background-color: rgba(255, 255, 255, 0);
   background-image: url("~@/assets/arrow-down.svg");
   background-repeat: no-repeat, repeat;
   /* arrow icon position (1em from the right, 50% vertical) , then gradient position*/
@@ -145,16 +145,16 @@ body {
 }
 
 .select-css:hover {
-  background-color: rgba(255, 255, 255, .15);
+  color: rgba(255, 255, 255, 1);
 }
 
 .v-card--reveal {
   box-sizing: border-box;
   position: absolute;
   bottom: 0;
-  height: 100%;
+  height: auto;
   width: 100%;
-  background: linear-gradient(to top, rgba(0, 0, 0, .25), rgba(0, 0, 0, .25));
+  background: rgba(0, 0, 0, .8);
   overflow-y: auto;
 }
 
@@ -175,7 +175,7 @@ body {
 
 .markdown {
   a {
-    color: #f66003!important;
+    color: dodgerblue!important;
     text-decoration: none;
   }
 }

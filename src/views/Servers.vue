@@ -544,14 +544,17 @@
               >
                 mdi-discord
               </v-icon>
-              <v-icon
-                  style="cursor: pointer"
-                  v-clipboard:copy="formatInvite(server.invite)"
-                  v-clipboard:success="onCopy"
+              <v-hover v-slot:default="{ hover }">
+                <v-icon
+                    :color="hover ? 'white' : 'rgba(255,255,255,0.5)'"
+                    style="cursor: pointer"
+                    v-clipboard:copy="formatInvite(server.invite)"
+                    v-clipboard:success="onCopy"
 
-              >
-                mdi-share
-              </v-icon>
+                >
+                  mdi-share
+                </v-icon>
+              </v-hover>
             </v-list-item>
           </v-card-actions>
           <v-divider class="mx-4"/>
@@ -563,62 +566,72 @@
           <v-row
               class="mx-4 pt-2 pb-0 orangekeg--text subtitle-2 font-weight-bold"
           >
-            {{ server.game }}
+            <v-chip
+                color="rgba(255, 255, 255, .05)"
+                label
+                small
+            >
+              {{ server.game }}
+            </v-chip>
           </v-row>
           <div
               class="px-4 py-2 subtitle-2 text-left">
-            <v-row class="mx-0 mb-1 grey--text">Started {{ timeSince(server.created) }} ago</v-row>
+            <v-row class="mx-0 mb-1 blue--text">Started {{ timeSince(server.created) }} ago</v-row>
             <v-row class="mx-0 white--text text-break">{{ server.message }}</v-row>
           </div>
-          <v-btn
-              text
-              width="100%"
-              elevation="0"
-              color="blue"
-              v-clipboard:copy="server.host"
-              v-clipboard:success="onCopy"
+          <div
+              class="pa-4"
           >
-            {{ server.host }}
-            <v-icon
-                right
-                dark
-                size="18px"
+            <v-btn
+                class="mb-2"
+                width="100%"
+                elevation="0"
+                color="blue"
+                v-clipboard:copy="server.host"
+                v-clipboard:success="onCopy"
             >
-              mdi-microsoft-xbox
-            </v-icon>
-          </v-btn>
-          <v-btn
-              v-if="server.steamID === user.steamID"
-              width="100%"
-              elevation="0"
-              color="red"
-              @click="deleteServer()"
-          >
-            Delete Server
-            <v-icon
-                right
-                dark
-                size="18px"
+              {{ server.host }}
+              <v-icon
+                  right
+                  dark
+                  size="18px"
+              >
+                mdi-microsoft-xbox
+              </v-icon>
+            </v-btn>
+            <v-btn
+                v-if="server.steamID === user.steamID"
+                width="100%"
+                elevation="0"
+                color="red"
+                @click="deleteServer()"
             >
-              mdi-trash-can-outline
-            </v-icon>
-          </v-btn>
-          <v-btn
-              v-else
-              width="100%"
-              elevation="0"
-              color="green"
-              :href="getInviteLink(server.invite)"
-          >
-            Join Game
-            <v-icon
-                right
-                dark
-                size="18px"
+              Delete Server
+              <v-icon
+                  right
+                  dark
+                  size="18px"
+              >
+                mdi-trash-can-outline
+              </v-icon>
+            </v-btn>
+            <v-btn
+                v-else
+                width="100%"
+                elevation="0"
+                color="green"
+                :href="getInviteLink(server.invite)"
             >
-              mdi-steam
-            </v-icon>
-          </v-btn>
+              Join Game
+              <v-icon
+                  right
+                  dark
+                  size="18px"
+              >
+                mdi-steam
+              </v-icon>
+            </v-btn>
+          </div>
         </v-card>
       </v-col>
     </v-row>

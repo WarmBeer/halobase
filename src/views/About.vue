@@ -38,6 +38,7 @@
               href="https://www.patreon.com/beerkeg"
               color="accent"
               elevation="0"
+              class="mb-4"
           >
             DONATE WITH PATREON
           </v-btn>

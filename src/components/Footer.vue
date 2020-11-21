@@ -81,18 +81,58 @@
           class="mx-0 px-1"
       >
         <v-col
-          cols="auto"
+            cols="12"
+            md="auto"
         >
           <div
-              style="height: 28px;line-height: 28px;text-align: center"
-              class="caption grey--text"
+              style="color: rgba(255,255,255,.85);height: 28px;line-height: 28px;text-align: center"
+              class="caption"
           >
-            Copyright © {{ new Date().getFullYear() }} HaloBase & The Beer Keg. Halo © Microsoft Corporation.
+            Copyright © {{ new Date().getFullYear() }} Halobase & The Beer Keg. Halo © Microsoft Corporation.
           </div>
+        </v-col>
+        <v-col
+            cols="12"
+            md="auto"
+        >
+          <v-btn
+              small
+              dark
+              color="#e64413"
+              href="https://www.patreon.com/beerkeg"
+          >
+            Support with Patreon
+            <v-icon
+                small
+                class="ml-2"
+            >
+              mdi-patreon
+            </v-icon>
+          </v-btn>
+        </v-col>
+        <v-col
+            cols="12"
+            md="auto"
+        >
+          <v-btn
+              small
+              dark
+              color="indigo lighten-1"
+              href="https://discord.gg/WnZqJef"
+          >
+            Join us on Discord
+            <v-icon
+                small
+                class="ml-2"
+            >
+              mdi-discord
+            </v-icon>
+          </v-btn>
         </v-col>
         <v-spacer/>
         <v-col
-            cols="auto"
+            cols="12"
+            md="auto"
         >
           <v-btn
               text
@@ -105,7 +145,8 @@
           </v-btn>
         </v-col>
         <v-col
-            cols="auto"
+            cols="12"
+            md="auto"
         >
           <v-btn
               text
@@ -118,7 +159,8 @@
           </v-btn>
         </v-col>
         <v-col
-            cols="auto"
+            cols="12"
+            md="auto"
         >
           <v-btn
               text

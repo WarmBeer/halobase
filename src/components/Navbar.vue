@@ -14,7 +14,7 @@
           :to="'/'+link"
           text
           class="custom-btn white--text mr-2 rounded-lg"
-          color="blue"
+          color="white"
       >
         {{ link }}
       </v-btn>
