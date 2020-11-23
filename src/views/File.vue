@@ -131,12 +131,12 @@
           </v-icon>
         </v-btn>
         <v-dialog
+            v-if="myFile"
             v-model="dialog"
             max-width="600px"
         >
           <template v-slot:activator="{ on }">
             <v-btn
-                v-if="myFile"
                 v-on="on"
                 width="100%"
                 elevation="0"
