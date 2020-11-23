@@ -119,7 +119,7 @@
             :loading="waitingForDownload"
             color="accent"
             width="100%"
-            class="mt-4 font-weight-bold rounded-lg"
+            class="mt-2 font-weight-bold rounded-lg"
             @click="getDownload()"
         >
           DOWNLOAD
@@ -130,6 +130,195 @@
             mdi-download
           </v-icon>
         </v-btn>
+        <v-dialog
+            v-model="dialog"
+            max-width="600px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+                v-if="myFile"
+                v-on="on"
+                width="100%"
+                elevation="0"
+                color="blue"
+                dark
+                class="mt-2 font-weight-bold rounded-lg"
+            >
+              Edit File
+              <v-icon
+                  right
+                  small
+              >
+                mdi-pencil
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-card
+              v-if="uploading"
+              dark
+              color="primary"
+              class="rounded-lg"
+          >
+            <v-card-title>
+              <span class="headline">UPLOADING..</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-progress-linear
+                      color="orangekeg"
+                      height="25"
+                      class="rounded-lg"
+                      :value="$dao.file.uploadProgress"
+                  >
+                    <strong>{{ progress.text }}</strong>
+                  </v-progress-linear>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+          <v-card
+              v-else
+              dark
+              color="primary"
+          >
+            <v-card-title>
+              <span class="headline">UPLOAD FILE</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-form
+                      v-model="valid"
+                      style="width: 100%"
+                  >
+                    <v-text-field
+                        v-model="updatedFile.name"
+                        disabled
+                        :counter="48"
+                        :rules="[
+                          v => !!v || 'Title is required',
+                          v => (v && v.length <= 48) || `Title must be less than 48 characters`,
+                        ]"
+                        label="Title"
+                        hint="Title as seen in the Fileshare"
+                        required
+                    ></v-text-field>
+                    <v-select
+                        v-model="updatedFile.type"
+                        :items="$dao.collections.FILE_CATEGORIES"
+                        :rules="[v => !!v || 'Category is required']"
+                        label="Category"
+                        required
+                    ></v-select>
+                    <v-select
+                        v-model="updatedFile.game"
+                        :items="['Any'].concat($dao.collections.GAMES)"
+                        :rules="[v => !!v || 'Game is required']"
+                        label="Game"
+                        required
+                    ></v-select>
+                    <v-textarea
+                        v-model="updatedFile.description.short"
+                        :counter="256"
+                        :rules="[v => !!v || 'Short description is required', v => (!v || v.length <= 256) || `Short description must be less than 256 characters`]"
+                        label="Short Description"
+                        auto-grow
+                    ></v-textarea>
+                    <v-textarea
+                        v-model="updatedFile.description.long"
+                        :counter="8192"
+                        :rules="[v => (!v || v.length <= 8192) || `Full description must be less than 8192 characters`]"
+                        label="Full Description (Markdown supported)"
+                        auto-grow
+                    ></v-textarea>
+                    <input type="file" ref="image" @change="processImages"
+                           accept=".jpg,.JPG,.jpeg,.JPEG,.png,.PNG" style="display: none" multiple max="8" min="1">
+                    <div
+                        class="mt-2 d-flex flex-row overflow-x-auto"
+                    >
+                      <draggable
+                          v-model="images"
+                          class="d-flex flex-row"
+                          style="width: 100%"
+                      >
+                        <v-img
+                            v-for="(img, index) in imageBlobs"
+                            :key="index"
+                            :src="img"
+                            class="ml-2 file-image rounded-lg black"
+                            :aspect-ratio="16/10"
+                            width="25%"
+                            max-width="25%"
+                        >
+                          <v-hover v-slot:default="{ hover }">
+                            <v-icon
+                                :color="hover ? 'red' : 'rgba(255,255,255,.75)'"
+                                class="float-right"
+                                @click="removeImage(index)"
+                            >
+                              mdi-trash-can
+                            </v-icon>
+                          </v-hover>
+                        </v-img>
+                      </draggable>
+                    </div>
+                    <strong class="mt-1 d-block" style="width: 100%">Min 1 max 8 images. 10MB file size limit per image.</strong>
+                    <v-btn
+                        elevation="0"
+                        width="100%"
+                        class="my-2 rounded-lg"
+                        style="background-color: rgba(255, 255, 255, .05)"
+                        @click="$refs.image.click()"
+                    >
+                      ADD IMAGES
+                    </v-btn>
+                    <v-chip
+                        v-if="rawFile"
+                        label
+                        class="mt-2"
+                    >
+                      <span
+                          class="text-truncate"
+                          style="max-width: 150px"
+                      >
+                        {{ rawFile.name+rawFile.type }}
+                      </span>
+                      {{ fileSize(rawFile.size) }}
+                    </v-chip>
+                    <input type="file" ref="file" @change="processFile"
+                           accept=".zip,.ZIP" style="display: none" min="1">
+                    <strong class="mt-1 d-block" style="width: 100%">Max 5GB file size.</strong>
+                    <v-btn
+                        elevation="0"
+                        width="100%"
+                        class="my-2 orangekeg rounded-lg"
+                        @click="$refs.file.click()"
+                    >
+                      SELECT FILE
+                    </v-btn>
+                  </v-form>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                  color="red darken-1"
+                  @click="dialog = false"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                  color="blue darken-1"
+                  :disabled="!valid || !madeChanges"
+                  @click="submitChanges()"
+              >
+                Save Changes
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
       </v-col>
     </v-row>
     <v-row>
@@ -165,7 +354,7 @@
           <div
               class="py-2 subtitle-1 white--text text-left"
           >
-            <div class="markdown" v-html="marked(newDescription)"></div>
+            <div class="markdown" v-html="marked(file.description.long)"></div>
           </div>
         </v-sheet>
       </v-col>
@@ -176,10 +365,28 @@
 <script>
 import marked from 'marked';
 import DOMPurify from 'dompurify';
+import draggable from 'vuedraggable';
+
 
 export default {
   name: "File",
+  components: {
+    draggable
+  },
   data: () => ({
+    updatedFile: {
+      name: '',
+      type: '',
+      game: '',
+      description: {
+        short: '',
+        long: ''
+      }
+    },
+    images: [],
+    rawFile: '',
+    dialog: false,
+    valid: false,
     snackbar: {
       show: false,
       text: ''
@@ -199,20 +406,119 @@ export default {
         slider: [],
       },
     },
-    fileImages: [],
-    oldFileImages: [],
-    updating: false,
-    newFile: '',
+    progress: {
+      percentage: 0,
+      text: ''
+    },
+    uploading: false,
     selectedImage: 0,
-    newVersion: '',
-    newCaption: '',
-    newDescription: '',
-    newImages: '',
     waitingForDownload: false,
     downloadToken: '',
     downloadLink: ''
   }),
   methods: {
+    processImages(event) {
+      this.images = this.images.concat(Array.from(event.target.files));
+    },
+    processFile(event) {
+      if(event.target.files[0].size < 5000000000) {
+        [this.rawFile] = event.target.files;
+      } else {
+        this.snackbar = {
+          show: true,
+          text: 'File too big!'
+        };
+      }
+    },
+    submitChanges() {
+      if (!this.uploading) {
+        this.uploading = true;
+        this.progress = {
+          percentage: 0,
+          text: 'Requesting file update..'
+        };
+        let formData = new FormData();
+        formData.append('upload', !!this.rawFile);
+        formData.append('file', JSON.stringify(this.updatedFile));
+        formData.append('thumb', this.images[0]);
+        this.images.slice(1).forEach((img, index) => {
+          formData.append(`image[${index}]`, img);
+        });
+        this.$dao.file.postFileUpdate(this.identifier, formData)
+            .then((result) => {
+              if (result.ok) {
+                if (result.token) {
+                  this.progress = {
+                    percentage: 30,
+                    text: 'Uploading file, this may take a (long) while..'
+                  };
+                  //console.log(result);
+                  this.$dao.file.uploadFile(result.link, result.token, this.rawFile, result.identifier)
+                      .then((data) => {
+                        //console.log(data);
+                        if(data.fileId) {
+                          this.progress = {
+                            percentage: 80,
+                            text: 'File uploaded, verifying files..'
+                          };
+                          this.$dao.file.confirmFileUpload(result.identifier, data.fileId)
+                              .then((res) => {
+                                //console.log(res);
+                                this.progress = {
+                                  percentage: 100,
+                                  text: res.message
+                                };
+                                this.snackbar = {
+                                  show: true,
+                                  text: res.message
+                                };
+                                this.uploading = false;
+                                this.dialog = false;
+                                this.rawFile = '';
+                                this.getFile();
+                              });
+                        } else {
+                          this.uploading = false;
+                          this.snackbar = {
+                            show: true,
+                            text: 'Could not upload file, please try again.'
+                          };
+                        }
+                      });
+                } else {
+                  this.progress = {
+                    percentage: 100,
+                    text: result.message
+                  };
+                  this.snackbar = {
+                    show: true,
+                    text: result.message
+                  };
+                  this.uploading = false;
+                  this.dialog = false;
+                  this.rawFile = '';
+                  this.getFile();
+                }
+              } else {
+                this.uploading = false;
+                this.snackbar = {
+                  show: true,
+                  text: result.message
+                };
+              }
+            })
+            .catch(() => {
+              this.uploading = false;
+              this.snackbar = {
+                show: true,
+                text: 'Halobase is offline.'
+              };
+            });
+      }
+    },
+    removeImage(index) {
+      this.images.splice(index, 1);
+    },
     marked(input) {
       return marked(DOMPurify.sanitize(input));
     },
@@ -221,13 +527,17 @@ export default {
           .then((file) => {
             this.selectedImage = 0;
             this.file = file;
-            this.newFile = '';
-            this.newVersion = file.version;
-            this.newCaption = file.description.short;
-            this.newDescription = file.description.long;
-            this.fileImages = [...file.images.slider];
-            this.fileImages.unshift(file.images.thumb);
-            this.oldFileImages = [...this.fileImages];
+            this.images = [...file.images.slider];
+            this.images.unshift(file.images.thumb);
+            this.updatedFile = {
+              name: file.name,
+              type: file.type,
+              game: file.game,
+              description: {
+                short: file.description.short,
+                long: file.description.long
+              }
+            };
           });
     },
     getDownload() {
@@ -262,6 +572,9 @@ export default {
     },
   },
   computed: {
+    user() {
+      return this.$dao.user.user;
+    },
     details() {
       const file = this.file;
       const timeSince = this.timeSince;
@@ -277,10 +590,23 @@ export default {
         { name: 'Filesize', value: fileSize(file.size) }
       ]
     },
+    myFile() {
+      return this.file.author ? (this.user.steamID === this.file.author.id || this.user.role > 1) : 0;
+    },
+    madeChanges() {
+      return (
+          this.rawFile
+          || JSON.stringify(this.images) !== JSON.stringify(this.oldImages)
+          || this.updatedFile.type !== this.file.type
+          || this.updatedFile.game !== this.file.game
+          || this.updatedFile.description.short !== this.file.description.short
+          || this.updatedFile.description.long !== this.file.description.long
+      );
+    },
     imageBlobs() {
       const imageUrls = [];
-      if (this.fileImages) {
-        Array.from(this.fileImages).forEach((img) => {
+      if (this.images) {
+        Array.from(this.images).forEach((img) => {
           if (typeof img === 'string') {
             imageUrls.push(img);
           } else {
@@ -289,6 +615,11 @@ export default {
         });
       }
       return imageUrls;
+    },
+    oldImages() {
+      const images = [...this.file.images.slider];
+      images.unshift(this.file.images.thumb);
+      return images;
     },
   },
   beforeMount() {

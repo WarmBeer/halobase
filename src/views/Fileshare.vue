@@ -204,7 +204,7 @@
                       color="orangekeg"
                       height="25"
                       class="rounded-lg"
-                      :value="progress.percentage"
+                      :value="$dao.file.uploadProgress"
                   >
                     <strong>{{ progress.text }}</strong>
                   </v-progress-linear>
@@ -240,7 +240,7 @@
                     ></v-text-field>
                     <v-select
                         v-model="file.type"
-                        :items="fileCategories"
+                        :items="$dao.collections.FILE_CATEGORIES"
                         :rules="[v => !!v || 'Category is required']"
                         label="Category*"
                         required
@@ -286,7 +286,17 @@
                             :aspect-ratio="16/10"
                             width="25%"
                             max-width="25%"
-                        ></v-img>
+                        >
+                          <v-hover v-slot:default="{ hover }">
+                            <v-icon
+                                :color="hover ? 'red' : 'rgba(255,255,255,.75)'"
+                                class="float-right"
+                                @click="removeImage(index)"
+                            >
+                              mdi-trash-can
+                            </v-icon>
+                          </v-hover>
+                        </v-img>
                       </draggable>
                     </div>
                     <strong class="mt-1 d-block" style="width: 100%">Min 1 max 8 images. 10MB file size limit per image.</strong>
@@ -410,7 +420,7 @@
                 </v-chip>
               </v-row>
               <v-row
-                  class="mx-4 py-2 pt-0 subtitle-2 text-left"
+                  class="mx-4 py-2 pt-0 subtitle-2 text-left font-weight-regular"
                   style="cursor: pointer;"
                   @click="openFile(file.identifier)"
               >
@@ -462,7 +472,7 @@
                       dark
                       label
                       color="transparent"
-                      class="no-hover pa-0 ml-2"
+                      class="no-hover pa-0 ml-1"
                   >
                     {{ file.downloads }}
                     <v-icon
@@ -476,7 +486,7 @@
                       dark
                       label
                       color="transparent"
-                      class="no-hover pa-0 ml-2"
+                      class="no-hover pa-0 ml-1"
                   >
                     {{ fileSize(file.size) }}
                   </v-chip>
@@ -493,7 +503,7 @@
     >
       <v-btn
           dark
-          color="rgba(255,255,255,.1)"
+          color="rgba(255,255,255,.05)"
           elevation="0"
           class="text-caption font-weight-bold rounded-lg"
           @click="getMoreFiles()"
@@ -538,23 +548,13 @@ export default {
       game: '',
       search: ''
     },
-    fileCategories: [
-        'Campaign',
-        'Characters',
-        'Firefight',
-        'Forge',
-        'Gametypes',
-        'Graphics',
-        'Maps',
-        'Menu',
-        'Miscellaneous',
-        'Utilities',
-        'Vehicles'
-    ]
   }),
   methods: {
     processImages(event) {
       this.images = this.images.concat(Array.from(event.target.files));
+    },
+    removeImage(index) {
+      this.images.splice(index, 1);
     },
     processFile(event) {
       if(event.target.files[0].size < 5000000000) {

@@ -1,10 +1,11 @@
 import { blobToSHA1 } from 'file-to-sha1';
+const axios = require('axios');
 const API_URL = process.env.VUE_APP_API_URL || 'http://localhost';
 let TOKEN = '';
 
 const dao = {
     collections: {
-        GAMES : [
+        GAMES: [
             'Halo: CE',
             'Halo 2',
             'Halo 2A',
@@ -14,6 +15,19 @@ const dao = {
             'Halo 4',
             'ElDewrito'
         ],
+        FILE_CATEGORIES: [
+            'Campaign',
+            'Characters',
+            'Firefight',
+            'Forge',
+            'Gametypes',
+            'Graphics',
+            'Maps',
+            'Menu',
+            'Miscellaneous',
+            'Utilities',
+            'Vehicles'
+        ]
     },
     user: {
         user: {},
@@ -298,6 +312,17 @@ const dao = {
                 .then(response => response.json())
                 .then(result => result);
         },
+        postFileUpdate(identifier, formData) {
+            return fetch(`${API_URL}/files/${identifier}`, {
+                method: 'PUT',
+                body: formData,
+                headers: {
+                    Authorization: `Bearer ${TOKEN}`,
+                },
+            })
+                .then(response => response.json())
+                .then(result => result);
+        },
         confirmFileUpload(identifier, fileId) {
             const payload = {
                 identifier: identifier,
@@ -314,17 +339,19 @@ const dao = {
                 .then(response => response.json())
                 .then(result => result);
         },
+        uploadProgress: 0,
         async uploadFile(link, token, file, identifier) {
             const regexExtension = /(?:\.([^.]+))?$/;
             const ext = regexExtension.exec(file.name);
             const sha1 = await blobToSHA1(file)
-            console.log(sha1);
-            console.log(ext);
-            console.log(`files/${identifier}`);
-            console.log(file);
-            console.log(link);
-            console.log(token);
+            //console.log(sha1);
+            //console.log(ext);
+            //console.log(`files/${identifier}`);
+            //console.log(file);
+            //console.log(link);
+            //console.log(token);
 
+            /*
             return fetch(link, {
                 method: 'POST',
                 body: file,
@@ -338,6 +365,21 @@ const dao = {
             })
                 .then(response => response.json())
                 .then(result => result);
+             */
+
+            return axios.post( link, file, {
+                headers: {
+                    Authorization: token,
+                    'Content-Type': 'b2/x-auto',
+                    'X-Bz-File-Name': `files/${identifier}${ext[0]}`,
+                    'X-Bz-Content-Sha1': sha1
+                },
+                onUploadProgress: ({ loaded, total }) => {
+                    this.uploadProgress = parseInt((loaded / total) * 100);
+                    console.log(`${this.uploadProgress}%`);
+                }
+            })
+                .then(result => result.data);
         }
     }
 }
